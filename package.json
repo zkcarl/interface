@@ -38,7 +38,7 @@
     "immer": "9.0.21",
     "@uniswap/v2-sdk": "4.3.0",
     "@apollo/client": "3.9.6",
-    "@uniswap/sdk-core": "4.2.0",
+    "@uniswap/sdk-core": "file:.yalc/@uniswap/sdk-core",
     "@react-navigation/routers": "6.1.9",
     "@react-navigation/core": "6.2.2",
     "@sideway/formula": "3.0.1",
@@ -82,6 +82,7 @@
     "@tamagui/animations-moti@1.92.0": "patch:@tamagui/animations-moti@npm%3A1.92.0#./.yarn/patches/@tamagui-animations-moti-npm-1.92.0-a8dde990ec.patch"
   },
   "scripts": {
+    "postinstall-universal": "patch-package @uniswap/universal-router-sdk",
     "g:build": "turbo run build --concurrency=100%",
     "g:check:deps:usage": " depcheck && turbo run check:deps:usage",
     "g:check:deps:mismatch": "manypkg check",
@@ -124,5 +125,9 @@
     "apps/*",
     "packages/*",
     "config/*"
-  ]
+  ],
+  "devDependencies": {
+    "patch-package": "8.0.0",
+    "postinstall-postinstall": "2.1.0"
+  }
 }

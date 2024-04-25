@@ -178,11 +178,18 @@ export default function PositionListItem({
   const token0 = useToken(token0Address)
   const token1 = useToken(token1Address)
 
+
   const currency0 = token0 ? unwrappedToken(token0) : undefined
   const currency1 = token1 ? unwrappedToken(token1) : undefined
 
+
+  console.log('PositionListItem-token0Address',token0Address,token0,currency0)
+  console.log('PositionListItem-token1Address',token1Address,token1,currency1)
+
+
   // construct Position from details returned
   const [, pool] = usePool(currency0 ?? undefined, currency1 ?? undefined, feeAmount)
+  console.log('PositionListItem-pool',pool)
 
   const position = useMemo(() => {
     if (pool) {

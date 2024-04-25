@@ -111,6 +111,11 @@ export function usePools(
 
   const slot0s = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, 'slot0')
   const liquidities = useMultipleContractSingleData(poolAddresses, POOL_STATE_INTERFACE, 'liquidity')
+  console.log('usePools++++++poolKeys',poolKeys);
+  console.log('usePools++++++poolTokens',poolTokens);
+  console.log('usePools++++++poolAddresses',poolAddresses);
+  console.log('usePools++++++slot0s',slot0s);
+  console.log('usePools++++++liquidities',liquidities)
 
   return useMemo(() => {
     return poolKeys.map((_key, index) => {
@@ -149,7 +154,7 @@ export function usePool(
     () => [[currencyA, currencyB, feeAmount]],
     [currencyA, currencyB, feeAmount]
   )
-
+  console.log('usePool++++++',currencyA,currencyB)
   return usePools(poolKeys)[0]
 }
 
@@ -159,6 +164,7 @@ export function usePoolMultichain(
   fee: number | undefined,
   chainId: ChainId
 ): [PoolState, Pool | null] {
+  console.log('V3_CORE_FACTORY_ADDRESSES[chainId]1',V3_CORE_FACTORY_ADDRESSES[chainId])
   const [poolData, setPoolData] = useState<[PoolState, Pool | null]>([PoolState.LOADING, null])
   const poolAddress =
     tokenA && tokenB && fee

@@ -52,3 +52,10 @@ packages/uniswap/src/i18n/locales/@types/resources.d.ts
 
 # Vercel
 .vercel
+
+.yalc/
+
+apps/mobile/*
+
+
+universal-router-sdk

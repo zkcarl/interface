@@ -108,6 +108,8 @@ function AddLiquidity() {
     feeAmount?: string
     tokenId?: string
   }>()
+
+  console.log('useParams',currencyIdA,currencyIdB)
   const { account, chainId, provider } = useWeb3React()
   const theme = useTheme()
   const trace = useTrace()
@@ -135,6 +137,10 @@ function AddLiquidity() {
   // prevent an error if they input ETH/WETH
   const quoteCurrency =
     baseCurrency && currencyB && baseCurrency.wrapped.equals(currencyB.wrapped) ? undefined : currencyB
+
+    console.log('quoteCurrency1',currencyIdA,currencyIdB)
+
+    console.log('quoteCurrency2',baseCurrency,quoteCurrency)
 
   // mint state
   const { independentField, typedValue, startPriceTypedValue } = useV3MintState()
@@ -234,6 +240,8 @@ function AddLiquidity() {
     outOfRange ? ZERO_PERCENT : DEFAULT_ADD_IN_RANGE_SLIPPAGE_TOLERANCE
   )
 
+  console.log('allowedSlippage',allowedSlippage)
+
   async function onAdd() {
     if (!chainId || !provider || !account) return
 
@@ -266,6 +274,8 @@ function AddLiquidity() {
         data: calldata,
         value,
       }
+
+      console.log('txn',txn);
 
       if (argentWalletContract) {
         const amountA = parsedAmounts[Field.CURRENCY_A]
@@ -370,6 +380,7 @@ function AddLiquidity() {
 
   const handleCurrencyASelect = useCallback(
     (currencyANew: Currency) => {
+      console.log('handleCurrencyBSelect',currencyANew);
       const [idA, idB] = handleCurrencySelect(currencyANew, currencyIdB)
       if (idB === undefined) {
         navigate(`/add/${idA}`)
@@ -382,6 +393,7 @@ function AddLiquidity() {
 
   const handleCurrencyBSelect = useCallback(
     (currencyBNew: Currency) => {
+      console.log('handleCurrencyBSelect',currencyBNew)
       const [idB, idA] = handleCurrencySelect(currencyBNew, currencyIdA)
       if (idA === undefined) {
         navigate(`/add/${idB}`)
@@ -546,7 +558,7 @@ function AddLiquidity() {
               )}
             </RowBetween>
           )}
-        <ButtonError
+         <ButtonError
           onClick={() => {
             setShowConfirm(true)
           }}

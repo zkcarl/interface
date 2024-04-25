@@ -33,6 +33,7 @@ function useTicksFromSubgraph(
   chainId: ChainId
 ) {
   const apolloClient = chainToApolloClient[chainId]
+  console.log('V3_CORE_FACTORY_ADDRESSES[chainId]2',V3_CORE_FACTORY_ADDRESSES)
   const poolAddress =
     currencyA && currencyB && feeAmount
       ? Pool.getAddress(

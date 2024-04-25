@@ -419,6 +419,11 @@ export function useV3DerivedMintInfo(
       : BIG_INT_ZERO
 
     if (amount0 !== undefined && amount1 !== undefined) {
+      console.log('position-poolForPosition',poolForPosition);
+      console.log('position-tickLower',tickLower)
+      console.log('position-tickUpper',tickUpper)
+      console.log('position-amount0',amount0)
+      console.log('position-amount1',amount1)
       return Position.fromAmounts({
         pool: poolForPosition,
         tickLower,

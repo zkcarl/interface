@@ -336,7 +336,7 @@ export function useCurrency(address?: string, chainId?: ChainId, skip?: boolean)
   const currencyInfo = useCurrencyInfo(address, chainId, skip)
   const gqlTokenListsEnabled = useFeatureFlag(FeatureFlags.GqlTokenLists)
   const tokenListCurrency = useTokenListCurrency(address, chainId)
-  return gqlTokenListsEnabled ? currencyInfo?.currency : tokenListCurrency
+  return gqlTokenListsEnabled ? (currencyInfo?.currency||tokenListCurrency) : tokenListCurrency
 }
 
 /**
@@ -394,6 +394,7 @@ export function useToken(tokenAddress?: string, chainId?: ChainId): Maybe<Token>
 
   const { chainId: connectedChainId } = useWeb3React()
   const currency = useCurrency(tokenAddress, chainId ?? connectedChainId)
+  console.log('useToken--->',tokenAddress,gqlTokenListsEnabled,tokenListToken,currency)
   return useMemo(() => {
     if (!gqlTokenListsEnabled) {
       return tokenListToken
@@ -401,7 +402,8 @@ export function useToken(tokenAddress?: string, chainId?: ChainId): Maybe<Token>
     if (!currency) {
       return undefined
     }
-    if (currency instanceof Token) {
+    // if (currency instanceof Token) {
+      if (currency) {
       return currency
     }
     return undefined

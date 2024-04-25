@@ -55,7 +55,7 @@ export function useRestQuery<
       }
     }
   `
-
+    console.log('document',document)
   const defaultClient = useApolloClient()
 
   const queryOptions: QueryHookOptions<{ data: TData }, { input: TVariables }> = {
