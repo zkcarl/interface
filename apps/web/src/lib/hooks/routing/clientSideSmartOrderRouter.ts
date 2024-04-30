@@ -1,13 +1,26 @@
 import { BigintIsh, ChainId, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
 // This file is lazy-loaded, so the import of smart-order-router is intentional.
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { AlphaRouter, AlphaRouterConfig } from '@uniswap/smart-order-router'
-import { asSupportedChain } from 'constants/chains'
-import { RPC_PROVIDERS } from 'constants/providers'
-import { nativeOnChain } from 'constants/tokens'
-import JSBI from 'jsbi'
-import { GetQuoteArgs, QuoteResult, QuoteState, SwapRouterNativeAssets } from 'state/routing/types'
-import { transformSwapRouteToGetQuoteResult } from 'utils/transformSwapRouteToGetQuoteResult'
+import {
+  AlphaRouter,
+  AlphaRouterConfig,
+  LegacyRouter,
+  OnChainQuoteProvider,
+  TokenProvider,
+  UniswapMulticallProvider,
+  V3PoolProvider,
+} from "@uniswap/smart-order-router";
+import { asSupportedChain } from "constants/chains";
+import { RPC_PROVIDERS } from "constants/providers";
+import { nativeOnChain } from "constants/tokens";
+import JSBI from "jsbi";
+import {
+  GetQuoteArgs,
+  QuoteResult,
+  QuoteState,
+  SwapRouterNativeAssets,
+} from "state/routing/types";
+import { transformSwapRouteToGetQuoteResult } from "utils/transformSwapRouteToGetQuoteResult";
 
 const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
   ChainId.MAINNET,
@@ -24,21 +37,39 @@ const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
   ChainId.BNB,
   ChainId.AVALANCHE,
   ChainId.BASE,
-]
-const routers = new Map<ChainId, AlphaRouter>()
+];
+const routers = new Map<ChainId, AlphaRouter>();
 export function getRouter(chainId: ChainId): AlphaRouter {
-  const router = routers.get(chainId)
-  if (router) return router
+  const router = routers.get(chainId);
+  console.log(router, "router_____res");
+  if (router) return router;
 
-  const supportedChainId = asSupportedChain(chainId)
+  const supportedChainId = asSupportedChain(chainId);
   if (supportedChainId && CLIENT_SIDE_ROUTING_ALLOW_LIST.includes(chainId)) {
-    const provider = RPC_PROVIDERS[supportedChainId]
-    const router = new AlphaRouter({ chainId, provider })
-    routers.set(chainId, router)
-    return router
+    const provider = RPC_PROVIDERS[supportedChainId];
+    const multicallProvider = new UniswapMulticallProvider(
+      chainId,
+      provider,
+      375_000
+    );
+    const tokenProvider = new TokenProvider(chainId, multicallProvider);
+    const router = new LegacyRouter({
+      chainId,
+      multicall2Provider: multicallProvider,
+      poolProvider: new V3PoolProvider(chainId, multicallProvider),
+      quoteProvider: new OnChainQuoteProvider(
+        chainId,
+        provider,
+        multicallProvider
+      ),
+      tokenProvider,
+    });
+    // const router = new AlphaRouter({ chainId, provider })
+    routers.set(chainId, router);
+    return router;
   }
 
-  throw new Error(`Router does not support this chain (chainId: ${chainId}).`)
+  throw new Error(`Router does not support this chain (chainId: ${chainId}).`);
 }
 
 async function getQuote(
