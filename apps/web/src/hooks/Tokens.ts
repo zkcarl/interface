@@ -332,11 +332,17 @@ function useTokenListCurrency(currencyId: Maybe<string>, chainId?: ChainId): Cur
   return useCurrencyFromMap(tokens, chainId ?? connectedChainId, currencyId)
 }
 
-export function useCurrency(address?: string, chainId?: ChainId, skip?: boolean): Maybe<Currency> {
-  const currencyInfo = useCurrencyInfo(address, chainId, skip)
-  const gqlTokenListsEnabled = useFeatureFlag(FeatureFlags.GqlTokenLists)
-  const tokenListCurrency = useTokenListCurrency(address, chainId)
-  return gqlTokenListsEnabled ? currencyInfo?.currency : tokenListCurrency
+export function useCurrency(
+  address?: string,
+  chainId?: ChainId,
+  skip?: boolean
+): Maybe<Currency> {
+  const currencyInfo = useCurrencyInfo(address, chainId, skip);
+  const gqlTokenListsEnabled = useFeatureFlag(FeatureFlags.GqlTokenLists);
+  const tokenListCurrency = useTokenListCurrency(address, chainId);
+  return gqlTokenListsEnabled
+    ? currencyInfo?.currency || tokenListCurrency
+    : tokenListCurrency;
 }
 
 /**
@@ -344,66 +350,83 @@ export function useCurrency(address?: string, chainId?: ChainId, skip?: boolean)
  * be used directly if the gqlTokenListsEnabled flag is enabled, otherwise it
  * will return undefined every time.
  */
-export function useCurrencyInfo(currency?: Currency): Maybe<CurrencyInfo>
-export function useCurrencyInfo(address?: string, chainId?: ChainId, skip?: boolean): Maybe<CurrencyInfo>
+export function useCurrencyInfo(currency?: Currency): Maybe<CurrencyInfo>;
+export function useCurrencyInfo(
+  address?: string,
+  chainId?: ChainId,
+  skip?: boolean
+): Maybe<CurrencyInfo>;
 export function useCurrencyInfo(
   addressOrCurrency?: string | Currency,
   chainId?: ChainId,
   skip?: boolean
 ): Maybe<CurrencyInfo> {
-  const { chainId: connectedChainId } = useWeb3React()
-  const gqlTokenListsEnabled = useFeatureFlag(FeatureFlags.GqlTokenLists)
+  const { chainId: connectedChainId } = useWeb3React();
+  const gqlTokenListsEnabled = useFeatureFlag(FeatureFlags.GqlTokenLists);
 
   const address =
-    typeof addressOrCurrency === 'string'
+    typeof addressOrCurrency === "string"
       ? addressOrCurrency
       : addressOrCurrency?.isNative
       ? NATIVE_CHAIN_ID
-      : addressOrCurrency?.address
+      : addressOrCurrency?.address;
 
-  const currencyChainId = typeof addressOrCurrency === 'string' ? chainId : addressOrCurrency?.chainId
+  const currencyChainId =
+    typeof addressOrCurrency === "string"
+      ? chainId
+      : addressOrCurrency?.chainId;
 
-  const backendChainName = chainIdToBackendName(currencyChainId ?? connectedChainId)
+  const backendChainName = chainIdToBackendName(
+    currencyChainId ?? connectedChainId
+  );
   const isNative =
-    address === NATIVE_CHAIN_ID || address?.toLowerCase() === 'native' || address?.toLowerCase() === 'eth'
+    address === NATIVE_CHAIN_ID ||
+    address?.toLowerCase() === "native" ||
+    address?.toLowerCase() === "eth";
   const { data } = useSimpleTokenQuery({
     variables: {
       chain: backendChainName,
-      address: isNative ? getNativeTokenDBAddress(backendChainName) : address ?? '',
+      address: isNative
+        ? getNativeTokenDBAddress(backendChainName)
+        : address ?? "",
     },
     skip: (!address && !isNative) || skip || !gqlTokenListsEnabled,
-    fetchPolicy: 'cache-first',
-  })
+    fetchPolicy: "cache-first",
+  });
 
   return useMemo(() => {
     if (!gqlTokenListsEnabled) {
-      return undefined
+      return undefined;
     }
 
     if (!data?.token || !address || skip) {
-      return
+      return;
     }
 
-    return gqlTokenToCurrencyInfo(data.token as GqlToken)
-  }, [gqlTokenListsEnabled, data?.token, address, skip])
+    return gqlTokenToCurrencyInfo(data.token as GqlToken);
+  }, [gqlTokenListsEnabled, data?.token, address, skip]);
 }
 
-export function useToken(tokenAddress?: string, chainId?: ChainId): Maybe<Token> {
-  const gqlTokenListsEnabled = useFeatureFlag(FeatureFlags.GqlTokenLists)
-  const tokenListToken = useTokenListToken(tokenAddress)
+export function useToken(
+  tokenAddress?: string,
+  chainId?: ChainId
+): Maybe<Token> {
+  const gqlTokenListsEnabled = useFeatureFlag(FeatureFlags.GqlTokenLists);
+  const tokenListToken = useTokenListToken(tokenAddress);
 
-  const { chainId: connectedChainId } = useWeb3React()
-  const currency = useCurrency(tokenAddress, chainId ?? connectedChainId)
+  const { chainId: connectedChainId } = useWeb3React();
+  const currency = useCurrency(tokenAddress, chainId ?? connectedChainId);
   return useMemo(() => {
     if (!gqlTokenListsEnabled) {
-      return tokenListToken
+      return tokenListToken;
     }
     if (!currency) {
-      return undefined
+      return undefined;
     }
-    if (currency instanceof Token) {
-      return currency
+    // if (currency instanceof Token) {
+    if (currency) {
+      return currency;
     }
-    return undefined
-  }, [currency, gqlTokenListsEnabled, tokenListToken])
+    return undefined;
+  }, [currency, gqlTokenListsEnabled, tokenListToken]);
 }
