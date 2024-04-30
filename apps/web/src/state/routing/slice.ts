@@ -100,51 +100,88 @@ export const routingApi = createApi({
             configs: getRoutingAPIConfig(args),
           }
 
-          try {
-            return trace.child({ name: 'Quote on server', op: 'quote.server' }, async () => {
-              const response = await fetch({
-                method: 'POST',
-                url: `${UNISWAP_GATEWAY_DNS_URL}/quote`,
-                body: JSON.stringify(requestBody),
-                headers: {
-                  'x-request-source': 'uniswap-web',
-                },
-              })
+          // const requestBody = {
+          //   tokenInChainId,
+          //   tokenInAddress:tokenIn,
+          //   tokenOutChainId,
+          //   tokenOutAddress:tokenOut,
+          //   amount,
+          //   type:'exactIn',
+          //   // sendPortionEnabled,
+          //   // type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
+          //   // intent:
+          //   //   args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
+          //   // configs: getRoutingAPIConfig(args),
+          //   algorithm:'legacy'
+          // }
 
-              if (response.error) {
-                try {
-                  // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
-                  const errorData = response.error.data as { errorCode?: string; detail?: string }
-                  // NO_ROUTE should be treated as a valid response to prevent retries.
-                  if (
-                    typeof errorData === 'object' &&
-                    (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
-                  ) {
-                    sendAnalyticsEvent('No quote received from routing API', {
-                      requestBody,
-                      response,
-                      routerPreference: args.routerPreference,
-                    })
-                    return {
-                      data: { state: QuoteState.NOT_FOUND, latencyMs: trace.now() },
-                    }
-                  }
-                } catch {
-                  throw response.error
-                }
-              }
-
-              const uraQuoteResponse = response.data as URAQuoteResponse
-              const tradeResult = await transformQuoteToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
-              return { data: { ...tradeResult, latencyMs: trace.now() } }
-            })
-          } catch (error: any) {
-            console.warn(
-              `GetQuote failed on Unified Routing API, falling back to client: ${
-                error?.message ?? error?.detail ?? error
-              }`
-            )
-          }
+          // const requestBody = {
+          //   tokenInChainId:1,
+          //   tokenInAddress:'0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+          //   tokenOutChainId:1,
+          //   tokenOutAddress:'0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
+          //   amount:'100',
+          //   type:'exactIn',
+          //   // sendPortionEnabled,
+          //   // type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
+          //   // intent:
+          //   //   args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
+          //   // configs: getRoutingAPIConfig(args),
+          // }
+       
+          // try {
+          //   return trace.child({ name: 'Quote on server', op: 'quote.server' }, async () => {
+          //     const response = await fetch({
+          //       method: 'GET',
+          //       //https://g4lamnqiad.execute-api.us-east-1.amazonaws.com/prod/
+          //       // url: `${UNISWAP_GATEWAY_DNS_URL}/quote`,
+          //       url: `https://g4lamnqiad.execute-api.us-east-1.amazonaws.com/prod/quote`,
+          //       params: requestBody,
+          //       headers: {
+          //         // 'x-request-source': 'uniswap-web',
+          //       },
+          //     })
+          //     if (response.error) {
+          //       try {
+          //         // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
+          //         const errorData = response.error.data as { errorCode?: string; detail?: string }
+          //         // NO_ROUTE should be treated as a valid response to prevent retries.
+          //         if (
+          //           typeof errorData === 'object' &&
+          //           (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
+          //         ) {
+          //           sendAnalyticsEvent('No quote received from routing API', {
+          //             requestBody,
+          //             response,
+          //             routerPreference: args.routerPreference,
+          //           })
+          //           return {
+          //             data: { state: QuoteState.NOT_FOUND, latencyMs: trace.now() },
+          //           }
+          //         }
+          //       } catch {
+          //         throw response.error
+          //       }
+          //     }
+          //     console.log('quote response====>',response)
+          //     const responseQuote = {
+          //       routing: 'CLASSIC',
+          //       quote: response.data,
+          //       allQuotes: [],
+          //     }
+          //     // const uraQuoteResponse = response.data as URAQuoteResponse
+          //     const uraQuoteResponse = responseQuote  as URAQuoteResponse;
+          //     const tradeResult = await transformQuoteToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
+             
+          //     return { data: { ...tradeResult, latencyMs: trace.now() } }
+          //   })
+          // } catch (error: any) {
+          //   console.warn(
+          //     `GetQuote failed on Unified Routing API, falling back to client: ${
+          //       error?.message ?? error?.detail ?? error
+          //     }`
+          //   )
+          // }
 
           try {
             return trace.child({ name: 'Quote on client', op: 'quote.client' }, async () => {

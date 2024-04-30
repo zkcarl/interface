@@ -23,7 +23,7 @@ export const quickRouteApi = createApi({
           logSwapQuoteRequest(args.tokenInChainId, RouterPreference.API, true)
           const { tokenInAddress, tokenInChainId, tokenOutAddress, tokenOutChainId, amount, tradeType } = args
           const type = isExactInput(tradeType) ? 'EXACT_IN' : 'EXACT_OUT'
-
+         console.log(11111111111111111)
           const requestBody = {
             tokenInChainId,
             tokenInAddress,
@@ -38,7 +38,7 @@ export const quickRouteApi = createApi({
             url: `${UNISWAP_GATEWAY_DNS_URL}/quickroute`,
             params: requestBody,
           })
-
+          
           if (response.error) {
             // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
             const errorData = response.error.data as { errorCode?: string; detail?: string }

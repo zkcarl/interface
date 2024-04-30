@@ -171,6 +171,7 @@ export function useQuoteQuery(
     }
 
     if (result.data?.quote) {
+      console.log('result.data?.quote===>',result.data?.quote)
       const tradeType = request?.type === 'exactIn' ? TradeType.EXACT_INPUT : TradeType.EXACT_OUTPUT
       const tokenInIsNative = Object.values(SwapRouterNativeAssets).includes(
         request?.tokenInAddress as SwapRouterNativeAssets

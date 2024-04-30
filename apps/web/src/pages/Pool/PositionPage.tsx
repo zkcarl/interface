@@ -415,6 +415,7 @@ function PositionPageContent() {
   const removed = liquidity?.eq(0)
 
   const metadata = usePositionTokenURI(parsedTokenId)
+  console.log('metadata++++',metadata)
 
   const token0 = useToken(token0Address)
   const token1 = useToken(token1Address)

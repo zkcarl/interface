@@ -99,6 +99,8 @@ export function useDebouncedTrade(
     inputTax,
     outputTax
   )
+
+  console.log('useDebouncedTrade===>previewTradeResult',previewTradeResult)
   const routingApiTradeResult = useRoutingAPITrade(
     skipRoutingFetch,
     tradeType,
@@ -109,7 +111,7 @@ export function useDebouncedTrade(
     inputTax,
     outputTax
   )
-
+  console.log('useDebouncedTrade===>routingApiTradeResult',previewTradeResult)
   return previewTradeResult.currentTrade && !routingApiTradeResult.currentTrade
     ? previewTradeResult
     : routingApiTradeResult

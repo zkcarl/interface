@@ -82,6 +82,7 @@ export function usePreviewTrade(
   const isWindowVisible = useIsWindowVisible()
 
   const { isError, data: tradeResult, error, currentData } = useGetQuickRouteQueryState(queryArgs)
+  console.log('useGetQuickRouteQueryState',isError,tradeResult,error,currentData)
   useGetQuickRouteQuery(skipFetch || !isWindowVisible ? skipToken : queryArgs, {
     // If latest quote from cache was fetched > 2m ago, instantly repoll for another instead of waiting for next poll period
     refetchOnMountOrArgChange: 2 * 60,

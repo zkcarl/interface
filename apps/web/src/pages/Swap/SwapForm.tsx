@@ -85,7 +85,7 @@ export function SwapForm({ disableTokenInputs = false, onCurrencyChange }: SwapF
   const { chainId, prefilledState, currencyState } = useSwapAndLimitContext()
   const { swapState, setSwapState, derivedSwapInfo } = useSwapContext()
   const { typedValue, independentField } = swapState
-  console.log('derivedSwapInfo++++++++',derivedSwapInfo)
+  console.log('derivedSwapInfo++++++++',derivedSwapInfo,chainId)
   // token warning stuff
   const parsedQs = useParsedQueryString()
   const prefilledCurrencies = useMemo(() => {
@@ -316,7 +316,7 @@ export function SwapForm({ disableTokenInputs = false, onCurrencyChange }: SwapF
   )
 
   const maximumAmountIn = useMaxAmountIn(trade, allowedSlippage)
-  console.log(' UNIVERSAL_ROUTER_ADDRESS(chainId)',chainId, UNIVERSAL_ROUTER_ADDRESS(chainId!))
+  // console.log(' UNIVERSAL_ROUTER_ADDRESS(chainId)',chainId, UNIVERSAL_ROUTER_ADDRESS(chainId!))
   const allowance = usePermit2Allowance(
     maximumAmountIn ??
       (parsedAmounts[Field.INPUT]?.currency.isToken
