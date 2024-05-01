@@ -4,6 +4,11 @@
     "@uniswap/sdk-core": {
       "signature": "0a2f53694c3d13cb1a0fddb7fdac77a4",
       "file": true
+    },
+    "@uniswap/universal-router-sdk": {
+      "version": "1.9.0",
+      "signature": "11e5b2c57893948a5f1995a143e4c2e3",
+      "file": true
     }
   }
 }
