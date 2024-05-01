@@ -14074,9 +14074,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uniswap/sdk-core@file:.yalc/@uniswap/sdk-core::locator=universe%40workspace%3A.":
+"@uniswap/sdk-core@npm:4.2.0":
   version: 4.2.0
-  resolution: "@uniswap/sdk-core@file:.yalc/@uniswap/sdk-core#.yalc/@uniswap/sdk-core::hash=6f198f&locator=universe%40workspace%3A."
+  resolution: "@uniswap/sdk-core@npm:4.2.0"
   dependencies:
     "@ethersproject/address": ^5.0.2
     big.js: ^5.2.2
@@ -14084,7 +14084,7 @@ __metadata:
     jsbi: ^3.1.4
     tiny-invariant: ^1.1.0
     toformat: ^2.0.0
-  checksum: 30f975906d71e72d3b08e383b424ab5ee3163362365c749aa91a1c82e13131b187f3ad13e9f487d33a462ae741a8f2253c68829507390d760576d96fa6dea054
+  checksum: fc38a3b9ab9b4984c4b2e011bf0883278563e327218a85482644af14a67452fb9d7d20e703ef5e3376e56a62e39df59db93d6161257460e9c9a1cf6a89dc3fae
   languageName: node
   linkType: hard
 
@@ -14154,19 +14154,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@uniswap/universal-router-sdk@npm:1.8.2, @uniswap/universal-router-sdk@npm:^1.5.4, @uniswap/universal-router-sdk@npm:^1.5.8":
-  version: 1.8.2
-  resolution: "@uniswap/universal-router-sdk@npm:1.8.2"
+"@uniswap/universal-router-sdk@npm:1.9.0":
+  version: 1.9.0
+  resolution: "@uniswap/universal-router-sdk@npm:1.9.0"
   dependencies:
     "@uniswap/permit2-sdk": ^1.2.0
     "@uniswap/router-sdk": ^1.9.0
     "@uniswap/sdk-core": ^4.2.0
     "@uniswap/universal-router": 1.6.0
-    "@uniswap/v2-sdk": ^4.2.0
+    "@uniswap/v2-sdk": ^4.3.0
     "@uniswap/v3-sdk": ^3.11.0
     bignumber.js: ^9.0.2
     ethers: ^5.3.1
-  checksum: 87f7d9781ff22e71ecb38efb9cdf39408fed719c7fd6c301d33db0282b0f579b159fcd1b033bc3fb2aba92a551bafb33df2ae8aec7515524b8979c50b5d42b02
+  checksum: fc4bbe178cbdfc1228d93f9fe74de30b7d77feabc368576bbd972a6435a62f79da0ea26cf7d2754a8364c258e1b3521fcca68eee7609875d4b8daf08b06a6e3b
   languageName: node
   linkType: hard
 
