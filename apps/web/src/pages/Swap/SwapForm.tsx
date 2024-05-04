@@ -11,7 +11,7 @@ import { UNIVERSAL_ROUTER_ADDRESS } from "@novaswap/universal-router-sdk";
 import { useWeb3React } from '@web3-react/core'
 import { Trace, TraceEvent, sendAnalyticsEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer/MiniPortfolio/hooks'
-import { ButtonError, ButtonLight, ButtonPrimary } from 'components/Button'
+import { ButtonError, ZKButtonLight, ButtonPrimary } from 'components/Button'
 import { GrayCard } from 'components/Card'
 import { AutoColumn } from 'components/Column'
 import { ConfirmSwapModal } from 'components/ConfirmSwapModal'
@@ -688,9 +688,9 @@ export function SwapForm({ disableTokenInputs = false, onCurrencyChange }: SwapF
               properties={{ received_swap_quote: getIsReviewableQuote(trade, tradeState, swapInputError) }}
               element={InterfaceElementName.CONNECT_WALLET_BUTTON}
             >
-              <ButtonLight onClick={toggleWalletDrawer} fontWeight={535} $borderRadius="16px">
+              <ZKButtonLight onClick={toggleWalletDrawer} fontWeight={535} $borderRadius="16px" $borderColor="#03D498">
                 <Trans>Connect wallet</Trans>
-              </ButtonLight>
+              </ZKButtonLight>
             </TraceEvent>
           ) : chainId && chainId !== connectedChainId ? (
             <ButtonPrimary
