@@ -265,10 +265,10 @@ export default function Pool() {
                 <ThemedText.LargeHeader>
                   <Trans>Positions</Trans>
                 </ThemedText.LargeHeader>
-                <PoolVersionMenu protocolVersion={ProtocolVersion.V3} />
+                {/* <PoolVersionMenu protocolVersion={ProtocolVersion.V3} /> */}
               </Row>
               <ButtonRow>
-                {networkSupportsV2 && (
+                {/* {networkSupportsV2 && (
                   <PoolMenu
                     modal={ApplicationModal.POOL_OVERVIEW_OPTIONS}
                     menuItems={menuItems}
@@ -282,7 +282,7 @@ export default function Pool() {
                       </MoreOptionsButton>
                     )}
                   />
-                )}
+                )} */}
                 <ResponsiveButtonPrimary data-cy="join-pool-button" id="join-pool-button" as={Link} to="/add/ETH">
                   + <Trans>New position</Trans>
                 </ResponsiveButtonPrimary>
@@ -302,8 +302,11 @@ export default function Pool() {
                 <ErrorContainer>
                   <ThemedText.BodyPrimary color={theme.neutral3} textAlign="center">
                     <InboxIcon strokeWidth={1} style={{ marginTop: '2em' }} />
-                    <div>
-                      <Trans>Your active V3 liquidity positions will appear here.</Trans>
+                    <div style={{ marginTop: '0.5em'}}>
+                      <Trans>Your active V3 liquidity positions will.</Trans>
+                    </div>
+                    <div style={{ marginTop: '0.5em',fontSize: '2em'}}>
+                      <Trans>appear here.</Trans>
                     </div>
                   </ThemedText.BodyPrimary>
                   {!showConnectAWallet && closedPositions.length > 0 && (
@@ -332,9 +335,9 @@ export default function Pool() {
                 </ErrorContainer>
               )}
             </MainContentWrapper>
-            <HideSmall>
+            {/* <HideSmall>
               <CTACards />
-            </HideSmall>
+            </HideSmall> */}
           </AutoColumn>
         </AutoColumn>
       </PageWrapper>

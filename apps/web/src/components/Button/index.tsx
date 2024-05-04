@@ -146,6 +146,49 @@ const BaseButtonLight = styled(BaseButton)`
   }
 `
 
+const ZKBaseButtonLight = styled(BaseButton)`
+  background-color: ${({ theme }) => theme.accent2};
+  color: ${({ theme }) => theme.accent1};
+  font-size: 20px;
+  font-weight: 535;
+  border: 1px solid #03D498;
+
+  &:focus {
+    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && theme.accent2};
+    background-color: ${({ theme, disabled }) => !disabled && theme.accent2};
+  }
+  &:hover {
+    background-color: ${({ theme, disabled }) => !disabled && theme.accent2};
+  }
+  &:active {
+    box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && theme.accent2};
+    background-color: ${({ theme, disabled }) => !disabled && theme.accent2};
+  }
+
+  :hover {
+    ${ButtonOverlay} {
+      background-color: ${({ theme }) => theme.deprecated_stateOverlayHover};
+    }
+  }
+
+  :active {
+    ${ButtonOverlay} {
+      background-color: ${({ theme }) => theme.deprecated_stateOverlayPressed};
+    }
+  }
+
+  :disabled {
+    opacity: 0.4;
+    :hover {
+      cursor: auto;
+      background-color: transparent;
+      box-shadow: none;
+      border: 1px solid transparent;
+      outline: none;
+    }
+  }
+`
+
 export const ButtonGray = styled(BaseButton)`
   background-color: ${({ theme }) => theme.surface1};
   color: ${({ theme }) => theme.neutral2};
@@ -547,5 +590,15 @@ export const ButtonLight = ({ children, ...rest }: BaseButtonProps) => {
       <ButtonOverlay />
       {children}
     </BaseButtonLight>
+  )
+}
+
+
+export const ZKButtonLight = ({ children, ...rest }: BaseButtonProps) => {
+  return (
+    <ZKBaseButtonLight {...rest}>
+      <ButtonOverlay />
+      {children}
+    </ZKBaseButtonLight>
   )
 }

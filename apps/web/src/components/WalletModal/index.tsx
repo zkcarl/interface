@@ -69,7 +69,7 @@ export default function WalletModal({ openSettings }: { openSettings: () => void
     <Wrapper data-testid="wallet-modal">
       <AutoRow justify="space-between" width="100%">
         <ThemedText.SubHeader>Connect a wallet</ThemedText.SubHeader>
-        <IconButton Icon={Settings} onClick={openSettings} data-testid="wallet-settings" />
+        {/* <IconButton Icon={Settings} onClick={openSettings} data-testid="wallet-settings" /> */}
       </AutoRow>
       {showUniswapWalletOptions && (
         <>
@@ -90,12 +90,12 @@ export default function WalletModal({ openSettings }: { openSettings: () => void
           <Row flex="1" align="flex-start">
             <OptionGrid data-testid="option-grid">{orderedConnections}</OptionGrid>
           </Row>
-          {showDeprecatedMessage && (
+          {/* {showDeprecatedMessage && (
             <TextSectionWrapper>
               <DeprecatedInjectorMessage />
             </TextSectionWrapper>
-          )}
-          <Column gap="md">
+          )} */}
+          {/* <Column gap="md">
             <TextSectionWrapper>
               <PrivacyPolicyNotice />
             </TextSectionWrapper>
@@ -109,7 +109,7 @@ export default function WalletModal({ openSettings }: { openSettings: () => void
                 </TextSectionWrapper>
               </>
             )}
-          </Column>
+          </Column> */}
         </Column>
       )}
     </Wrapper>

@@ -71,7 +71,7 @@ export const PageTabs = () => {
       <MenuItem href="/swap" isActive={pathname.startsWith('/swap')}>
         <Trans>Swap</Trans>
       </MenuItem>
-      <MenuItem
+      {/* <MenuItem
         href={'/explore' + (chainName !== Chain.Ethereum ? `/${chainName.toLowerCase()}` : '')}
         isActive={pathname.startsWith('/explore')}
       >
@@ -81,13 +81,13 @@ export const PageTabs = () => {
         <MenuItem dataTestId="nft-nav" href="/nfts" isActive={isNftPage}>
           <Trans>NFTs</Trans>
         </MenuItem>
-      )}
+      )} */}
       <Box display={{ sm: 'flex', lg: 'none', xxl: 'flex' }} width="full">
         <MenuItem href="/pool" dataTestId="pool-nav-link" isActive={isPoolActive}>
           <Trans>Pool</Trans>
         </MenuItem>
       </Box>
-      <More />
+      {/* <More /> */}
     </>
   )
 }
@@ -110,7 +110,7 @@ const Navbar = ({ blur }: { blur: boolean }) => {
     }
     navigate({
       pathname: '/',
-      search: '?intro=true',
+      // search: '?intro=true',
     })
   }, [account, accountDrawerOpen, navigate, toggleAccountDrawer])
 
