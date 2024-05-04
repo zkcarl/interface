@@ -61,6 +61,8 @@ export function useUniversalRouterSwapCallback(
   const isAutoSlippage = useUserSlippageTolerance()[0] === 'auto'
   const portfolioBalanceUsd = useTotalBalancesUsdForAnalytics()
 
+  console.log(provider,'provider')
+
   return useCallback(
     (): Promise<{ type: TradeFillType.Classic; response: TransactionResponse; deadline?: BigNumber }> =>
       trace({ name: 'Swap (Classic)', op: 'swap.classic' }, async (trace) => {

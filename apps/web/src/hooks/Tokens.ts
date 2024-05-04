@@ -394,7 +394,7 @@ export function useToken(tokenAddress?: string, chainId?: ChainId): Maybe<Token>
 
   const { chainId: connectedChainId } = useWeb3React()
   const currency = useCurrency(tokenAddress, chainId ?? connectedChainId)
-  console.log('useToken--->',tokenAddress,gqlTokenListsEnabled,tokenListToken,currency)
+  console.log("useToken--->", gqlTokenListsEnabled, tokenListToken,currency);
   return useMemo(() => {
     if (!gqlTokenListsEnabled) {
       return tokenListToken

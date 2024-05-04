@@ -18,6 +18,7 @@ export const RPC_PROVIDERS = {
   [ChainId.MAINNET]: getAppProvider(ChainId.MAINNET),
   [ChainId.GOERLI]: getAppProvider(ChainId.GOERLI),
   [ChainId.SEPOLIA]: getAppProvider(ChainId.SEPOLIA),
+  [ChainId.NOVA_SEPOLIA]: getAppProvider(ChainId.NOVA_SEPOLIA),
   [ChainId.OPTIMISM]: getAppProvider(ChainId.OPTIMISM),
   [ChainId.OPTIMISM_GOERLI]: getAppProvider(ChainId.OPTIMISM_GOERLI),
   [ChainId.ARBITRUM_ONE]: getAppProvider(ChainId.ARBITRUM_ONE),
@@ -30,4 +31,4 @@ export const RPC_PROVIDERS = {
   [ChainId.AVALANCHE]: getAppProvider(ChainId.AVALANCHE),
   [ChainId.BASE]: getAppProvider(ChainId.BASE),
   [ChainId.BLAST]: getAppProvider(ChainId.BLAST),
-} satisfies Record<SupportedInterfaceChain, AppJsonRpcProvider>
+} satisfies Record<SupportedInterfaceChain, AppJsonRpcProvider>;

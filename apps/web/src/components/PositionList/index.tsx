@@ -70,21 +70,31 @@ export default function PositionList({
   setUserHideClosedPositions,
   userHideClosedPositions,
 }: PositionListProps) {
+  console.log(
+    "PositionList",
+    positions,
+    setUserHideClosedPositions,
+    userHideClosedPositions
+  );
   return (
     <>
       <DesktopHeader>
         <div>
-          <Trans>Your positions</Trans>
-          {positions && ' (' + positions.length + ')'}
+          <Trans>Your positions:2</Trans>
+          {positions && " (" + positions.length + ")"}
         </div>
 
         <ToggleLabel
           id="desktop-hide-closed-positions"
           onClick={() => {
-            setUserHideClosedPositions(!userHideClosedPositions)
+            setUserHideClosedPositions(!userHideClosedPositions);
           }}
         >
-          {userHideClosedPositions ? <Trans>Show closed positions</Trans> : <Trans>Hide closed positions</Trans>}
+          {userHideClosedPositions ? (
+            <Trans>Show closed positions</Trans>
+          ) : (
+            <Trans>Hide closed positions</Trans>
+          )}
         </ToggleLabel>
       </DesktopHeader>
       <MobileHeader>
@@ -92,10 +102,14 @@ export default function PositionList({
         <ToggleWrap>
           <ToggleLabel
             onClick={() => {
-              setUserHideClosedPositions(!userHideClosedPositions)
+              setUserHideClosedPositions(!userHideClosedPositions);
             }}
           >
-            {userHideClosedPositions ? <Trans>Show closed positions</Trans> : <Trans>Hide closed positions</Trans>}
+            {userHideClosedPositions ? (
+              <Trans>Show closed positions</Trans>
+            ) : (
+              <Trans>Hide closed positions</Trans>
+            )}
           </ToggleLabel>
         </ToggleWrap>
       </MobileHeader>
@@ -103,5 +117,5 @@ export default function PositionList({
         <PositionListItem key={p.tokenId.toString()} {...p} />
       ))}
     </>
-  )
+  );
 }

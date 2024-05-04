@@ -106,7 +106,8 @@ export const CHAIN_ID_TO_BACKEND_NAME: { [key: number]: InterfaceGqlChain } = {
   [ChainId.AVALANCHE]: Chain.Avalanche,
   [ChainId.BASE]: Chain.Base,
   [ChainId.BLAST]: Chain.Blast,
-}
+  [ChainId.NOVA_SEPOLIA]: "NOVA_SEPOLIA",
+};
 
 export function chainIdToBackendName(chainId: number | undefined) {
   return chainId && CHAIN_ID_TO_BACKEND_NAME[chainId]
@@ -195,7 +196,8 @@ const CHAIN_NAME_TO_CHAIN_ID: { [key in InterfaceGqlChain]: ChainId } = {
   [Chain.Avalanche]: ChainId.AVALANCHE,
   [Chain.Base]: ChainId.BASE,
   [Chain.Blast]: ChainId.BLAST,
-}
+  ["NOVA_SEPOLIA"]: ChainId.NOVA_SEPOLIA,
+};
 
 export function isSupportedGQLChain(chain: Chain): chain is InterfaceGqlChain {
   return (UX_SUPPORTED_GQL_CHAINS as ReadonlyArray<Chain>).includes(chain)

@@ -83,9 +83,10 @@
     "@tamagui/animations-moti@1.92.0": "patch:@tamagui/animations-moti@npm%3A1.92.0#./.yarn/patches/@tamagui-animations-moti-npm-1.92.0-a8dde990ec.patch"
   },
   "scripts": {
-    "postinstall":"patch-package",
+    "postinstall": "patch-package",
     "postinstall-sdk-core": "npx patch-package @uniswap/sdk-core",
     "postinstall-universal": "npx patch-package @uniswap/universal-router-sdk",
+    "postinstall-smart-order-router": "npx patch-package @uniswap/smart-order-router",
     "g:build": "turbo run build --concurrency=100%",
     "g:check:deps:usage": " depcheck && turbo run check:deps:usage",
     "g:check:deps:mismatch": "manypkg check",
@@ -114,7 +115,6 @@
     "lfg": "yarn g:prepare && yarn mobile env:local:download && yarn stretch env:local:download && yarn g:build && yarn mobile pod && yarn mobile ios",
     "mobile": "yarn workspace @uniswap/mobile",
     "local:check": "./scripts/local-version-check.sh",
-    "postinstall": "husky install && yarn g:prepare",
     "stretch": "yarn workspace @uniswap/stretch",
     "ui": "yarn workspace ui",
     "upgrade:tamagui": "yarn up '*tamagui*' '@tamagui/*'",

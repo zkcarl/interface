@@ -200,6 +200,7 @@ export default function PositionListItem({
 
   const tickAtLimit = useIsTickAtLimit(feeAmount, tickLower, tickUpper)
 
+  console.log(pool, position, "position-ttt");
   // prices
   const { priceLower, priceUpper, quote, base } = getPriceOrderingFromPositionForUI(position)
 
@@ -217,12 +218,20 @@ export default function PositionListItem({
     <LinkRow to={positionSummaryLink}>
       <RowBetween>
         <PrimaryPositionIdData>
-          <DoubleCurrencyLogo currency0={currencyBase} currency1={currencyQuote} size={18} margin />
+          <DoubleCurrencyLogo
+            currency0={currencyBase}
+            currency1={currencyQuote}
+            size={18}
+            margin
+          />
           <ThemedText.SubHeader>
             &nbsp;{currencyQuote?.symbol}&nbsp;/&nbsp;{currencyBase?.symbol}
           </ThemedText.SubHeader>
-
-          <FeeTierText>{formatDelta(parseFloat(new Percent(feeAmount, 1_000_000).toSignificant()))}</FeeTierText>
+          <FeeTierText>
+            {formatDelta(
+              parseFloat(new Percent(feeAmount, 1_000_000).toSignificant())
+            )}
+          </FeeTierText>
         </PrimaryPositionIdData>
         <RangeBadge removed={removed} inRange={!outOfRange} />
       </RowBetween>
@@ -238,17 +247,18 @@ export default function PositionListItem({
                 price: priceLower,
                 atLimit: tickAtLimit,
                 direction: Bound.LOWER,
-              })}{' '}
+              })}{" "}
             </span>
             <Trans>
-              <HoverInlineText text={currencyQuote?.symbol} /> per <HoverInlineText text={currencyBase?.symbol ?? ''} />
+              <HoverInlineText text={currencyQuote?.symbol} /> per{" "}
+              <HoverInlineText text={currencyBase?.symbol ?? ""} />
             </Trans>
-          </RangeText>{' '}
+          </RangeText>{" "}
           <HideSmall>
-            <DoubleArrow>↔</DoubleArrow>{' '}
+            <DoubleArrow>↔</DoubleArrow>{" "}
           </HideSmall>
           <SmallOnly>
-            <DoubleArrow>↔</DoubleArrow>{' '}
+            <DoubleArrow>↔</DoubleArrow>{" "}
           </SmallOnly>
           <RangeText>
             <ExtentsText>
@@ -259,10 +269,10 @@ export default function PositionListItem({
                 price: priceUpper,
                 atLimit: tickAtLimit,
                 direction: Bound.UPPER,
-              })}{' '}
+              })}{" "}
             </span>
             <Trans>
-              <HoverInlineText text={currencyQuote?.symbol} /> per{' '}
+              <HoverInlineText text={currencyQuote?.symbol} /> per{" "}
               <HoverInlineText maxCharacters={10} text={currencyBase?.symbol} />
             </Trans>
           </RangeText>
@@ -271,5 +281,5 @@ export default function PositionListItem({
         <Loader />
       )}
     </LinkRow>
-  )
+  );
 }

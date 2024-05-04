@@ -13,90 +13,103 @@ import { ReactComponent as blastLight } from './ChainSymbols/blast_light.svg'
 import { ReactComponent as bnb } from './ChainSymbols/bnb.svg'
 import { ReactComponent as celo } from './ChainSymbols/celo.svg'
 import { ReactComponent as celoLight } from './ChainSymbols/celo_light.svg'
-import { ReactComponent as ethereum } from './ChainSymbols/ethereum.svg'
-import { ReactComponent as optimism } from './ChainSymbols/optimism.svg'
-import { ReactComponent as polygon } from './ChainSymbols/polygon.svg'
+import { ReactComponent as zklink } from "./ChainSymbols/zklink.svg";
+import { ReactComponent as ethereum } from "./ChainSymbols/ethereum.svg";
+import { ReactComponent as optimism } from "./ChainSymbols/optimism.svg";
+import { ReactComponent as polygon } from "./ChainSymbols/polygon.svg";
 
-type SVG = FunctionComponent<React.SVGProps<SVGSVGElement>>
-type ChainUI = { Symbol: SVG; bgColor: string; textColor: string }
+type SVG = FunctionComponent<React.SVGProps<SVGSVGElement>>;
+type ChainUI = { Symbol: SVG; bgColor: string; textColor: string };
 
-export function getChainUI(chainId: SupportedInterfaceChain, darkMode: boolean): ChainUI
-export function getChainUI(chainId: ChainId, darkMode: boolean): ChainUI | undefined {
+export function getChainUI(
+  chainId: SupportedInterfaceChain,
+  darkMode: boolean
+): ChainUI;
+export function getChainUI(
+  chainId: ChainId,
+  darkMode: boolean
+): ChainUI | undefined {
   switch (chainId) {
     case ChainId.MAINNET:
     case ChainId.GOERLI:
     case ChainId.SEPOLIA:
       return {
         Symbol: ethereum,
-        bgColor: '#6B8AFF33',
-        textColor: '#6B8AFF',
-      }
+        bgColor: "#6B8AFF33",
+        textColor: "#6B8AFF",
+      };
+    case ChainId.NOVA_SEPOLIA:
+      return {
+        Symbol: zklink,
+        bgColor: "#03D498",
+        textColor: "#6B8AFF",
+      };
     case ChainId.POLYGON:
     case ChainId.POLYGON_MUMBAI:
       return {
         Symbol: polygon,
-        bgColor: '#9558FF33',
-        textColor: '#9558FF',
-      }
+        bgColor: "#9558FF33",
+        textColor: "#9558FF",
+      };
     case ChainId.ARBITRUM_ONE:
     case ChainId.ARBITRUM_GOERLI:
       return {
         Symbol: arbitrum,
-        bgColor: '#00A3FF33',
-        textColor: '#00A3FF',
-      }
+        bgColor: "#00A3FF33",
+        textColor: "#00A3FF",
+      };
     case ChainId.OPTIMISM:
     case ChainId.OPTIMISM_GOERLI:
       return {
         Symbol: optimism,
-        bgColor: '#FF042033',
-        textColor: '#FF0420',
-      }
+        bgColor: "#FF042033",
+        textColor: "#FF0420",
+      };
     case ChainId.CELO:
     case ChainId.CELO_ALFAJORES:
       return darkMode
         ? {
             Symbol: celo,
-            bgColor: '#FCFF5233',
-            textColor: '#FCFF52',
+            bgColor: "#FCFF5233",
+            textColor: "#FCFF52",
           }
         : {
             Symbol: celoLight,
-            bgColor: '#FCFF5299',
-            textColor: '#655947',
-          }
+            bgColor: "#FCFF5299",
+            textColor: "#655947",
+          };
     case ChainId.AVALANCHE:
       return {
         Symbol: avax,
-        bgColor: '#E8414233',
-        textColor: '#E84142',
-      }
+        bgColor: "#E8414233",
+        textColor: "#E84142",
+      };
     case ChainId.BNB:
       return {
         Symbol: bnb,
-        bgColor: '#EAB20033',
-        textColor: '#EAB200',
-      }
+        bgColor: "#EAB20033",
+        textColor: "#EAB200",
+      };
     case ChainId.BASE:
       return {
         Symbol: base,
-        bgColor: '#0052FF33',
-        textColor: '#0052FF',
-      }
+        bgColor: "#0052FF33",
+        textColor: "#0052FF",
+      };
     case ChainId.BLAST:
       return darkMode
         ? {
             Symbol: blast,
-            bgColor: 'rgba(252, 252, 3, 0.12)',
-            textColor: 'rgba(252, 252, 3, 1) ',
+            bgColor: "rgba(252, 252, 3, 0.12)",
+            textColor: "rgba(252, 252, 3, 1) ",
           }
         : {
             Symbol: blastLight,
-            bgColor: 'rgba(252, 252, 3, 0.16)',
-            textColor: 'rgba(17, 20, 12, 1)',
-          }
+            bgColor: "rgba(252, 252, 3, 0.16)",
+            textColor: "rgba(17, 20, 12, 1)",
+          };
     default:
-      return undefined
+      return undefined;
   }
 }
 

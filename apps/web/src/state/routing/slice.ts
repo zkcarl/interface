@@ -76,7 +76,11 @@ export const routingApi = createApi({
     getQuote: build.query<TradeResult, GetQuoteArgs>({
       queryFn(args, _api, _extraOptions, fetch) {
         return trace({ name: 'Quote', op: 'quote', data: { ...args } }, async (trace) => {
-          logSwapQuoteRequest(args.tokenInChainId, args.routerPreference, false)
+          logSwapQuoteRequest(
+            args.tokenInChainId,
+            args.routerPreference,
+            false
+          );
           const {
             tokenInAddress: tokenIn,
             tokenInChainId,
@@ -85,7 +89,7 @@ export const routingApi = createApi({
             amount,
             tradeType,
             sendPortionEnabled,
-          } = args
+          } = args;
 
           const requestBody = {
             tokenInChainId,
@@ -94,11 +98,13 @@ export const routingApi = createApi({
             tokenOut,
             amount,
             sendPortionEnabled,
-            type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
+            type: isExactInput(tradeType) ? "EXACT_INPUT" : "EXACT_OUTPUT",
             intent:
-              args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
+              args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE
+                ? QuoteIntent.Pricing
+                : QuoteIntent.Quote,
             configs: getRoutingAPIConfig(args),
-          }
+          };
 
           // const requestBody = {
           //   tokenInChainId,
@@ -128,7 +134,7 @@ export const routingApi = createApi({
           //   //   args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
           //   // configs: getRoutingAPIConfig(args),
           // }
-       
+
           // try {
           //   return trace.child({ name: 'Quote on server', op: 'quote.server' }, async () => {
           //     const response = await fetch({
@@ -172,7 +178,7 @@ export const routingApi = createApi({
           //     // const uraQuoteResponse = response.data as URAQuoteResponse
           //     const uraQuoteResponse = responseQuote  as URAQuoteResponse;
           //     const tradeResult = await transformQuoteToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
-             
+
           //     return { data: { ...tradeResult, latencyMs: trace.now() } }
           //   })
           // } catch (error: any) {
@@ -184,25 +190,42 @@ export const routingApi = createApi({
           // }
 
           try {
-            return trace.child({ name: 'Quote on client', op: 'quote.client' }, async () => {
-              const { getRouter, getClientSideQuote } = await import('lib/hooks/routing/clientSideSmartOrderRouter')
-              const router = getRouter(args.tokenInChainId)
-              const quoteResult = await getClientSideQuote(args, router, CLIENT_PARAMS)
-              if (quoteResult.state === QuoteState.SUCCESS) {
-                const trade = await transformQuoteToTrade(args, quoteResult.data, QuoteMethod.CLIENT_SIDE_FALLBACK)
-                return {
-                  data: { ...trade, latencyMs: trace.now() },
+            return trace.child(
+              { name: "Quote on client", op: "quote.client" },
+              async () => {
+                const { getRouter, getClientSideQuote } = await import(
+                  "lib/hooks/routing/clientSideSmartOrderRouter"
+                );
+                console.log(args, "args", "shit");
+                const router = getRouter(args.tokenInChainId);
+                const quoteResult = await getClientSideQuote(
+                  args,
+                  router,
+                  CLIENT_PARAMS
+                );
+                if (quoteResult.state === QuoteState.SUCCESS) {
+                  const trade = await transformQuoteToTrade(
+                    args,
+                    quoteResult.data,
+                    QuoteMethod.CLIENT_SIDE_FALLBACK
+                  );
+                  return {
+                    data: { ...trade, latencyMs: trace.now() },
+                  };
+                } else {
+                  return { data: { ...quoteResult, latencyMs: trace.now() } };
                 }
-              } else {
-                return { data: { ...quoteResult, latencyMs: trace.now() } }
               }
-            })
+            );
           } catch (error: any) {
-            console.warn(`GetQuote failed on client: ${error}`)
-            trace.setError(error)
+            console.warn(`GetQuote failed on client: ${error}`);
+            trace.setError(error);
             return {
-              error: { status: 'CUSTOM_ERROR', error: error?.detail ?? error?.message ?? error },
-            }
+              error: {
+                status: "CUSTOM_ERROR",
+                error: error?.detail ?? error?.message ?? error,
+              },
+            };
           }
         })
       },

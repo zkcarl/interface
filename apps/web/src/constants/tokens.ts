@@ -273,78 +273,103 @@ export const WRAPPED_NATIVE_CURRENCY: { [chainId: number]: Token | undefined } =
   ...(WETH9 as Record<ChainId, Token>),
   [ChainId.OPTIMISM]: new Token(
     ChainId.OPTIMISM,
-    '0x4200000000000000000000000000000000000006',
+    "0x4200000000000000000000000000000000000006",
     18,
-    'WETH',
-    'Wrapped Ether'
+    "WETH",
+    "Wrapped Ether"
   ),
   [ChainId.OPTIMISM_GOERLI]: new Token(
     ChainId.OPTIMISM_GOERLI,
-    '0x4200000000000000000000000000000000000006',
+    "0x4200000000000000000000000000000000000006",
     18,
-    'WETH',
-    'Wrapped Ether'
+    "WETH",
+    "Wrapped Ether"
   ),
-  [ChainId.BASE]: new Token(ChainId.BASE, '0x4200000000000000000000000000000000000006', 18, 'WETH', 'Wrapped Ether'),
+  [ChainId.BASE]: new Token(
+    ChainId.BASE,
+    "0x4200000000000000000000000000000000000006",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
   [ChainId.ARBITRUM_ONE]: new Token(
     ChainId.ARBITRUM_ONE,
-    '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+    "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
     18,
-    'WETH',
-    'Wrapped Ether'
+    "WETH",
+    "Wrapped Ether"
   ),
   [ChainId.ARBITRUM_GOERLI]: new Token(
     ChainId.ARBITRUM_GOERLI,
-    '0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3',
+    "0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3",
     18,
-    'WETH',
-    'Wrapped Ether'
+    "WETH",
+    "Wrapped Ether"
   ),
   [ChainId.SEPOLIA]: new Token(
     ChainId.SEPOLIA,
-    '0xb16F35c0Ae2912430DAc15764477E179D9B9EbEa',
+    "0xb16F35c0Ae2912430DAc15764477E179D9B9EbEa",
     18,
-    'WETH',
-    'Wrapped Ether'
+    "WETH",
+    "Wrapped Ether"
+  ),
+  [ChainId.NOVA_SEPOLIA]: new Token(
+    ChainId.NOVA_SEPOLIA,
+    "0x6e42d10eB474a17b14f3cfeAC2590bfa604313C7",
+    18,
+    "WETH",
+    "Wrapped Ether"
   ),
   [ChainId.POLYGON]: new Token(
     ChainId.POLYGON,
-    '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+    "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
     18,
-    'WMATIC',
-    'Wrapped MATIC'
+    "WMATIC",
+    "Wrapped MATIC"
   ),
   [ChainId.POLYGON_MUMBAI]: new Token(
     ChainId.POLYGON_MUMBAI,
-    '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889',
+    "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
     18,
-    'WMATIC',
-    'Wrapped MATIC'
+    "WMATIC",
+    "Wrapped MATIC"
   ),
   [ChainId.CELO]: new Token(
     ChainId.CELO,
-    '0x471ece3750da237f93b8e339c536989b8978a438',
+    "0x471ece3750da237f93b8e339c536989b8978a438",
     18,
-    'CELO',
-    'Celo native asset'
+    "CELO",
+    "Celo native asset"
   ),
   [ChainId.CELO_ALFAJORES]: new Token(
     ChainId.CELO_ALFAJORES,
-    '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
+    "0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9",
     18,
-    'CELO',
-    'Celo native asset'
+    "CELO",
+    "Celo native asset"
   ),
-  [ChainId.BNB]: new Token(ChainId.BNB, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB'),
+  [ChainId.BNB]: new Token(
+    ChainId.BNB,
+    "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    18,
+    "WBNB",
+    "Wrapped BNB"
+  ),
   [ChainId.AVALANCHE]: new Token(
     ChainId.AVALANCHE,
-    '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+    "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
     18,
-    'WAVAX',
-    'Wrapped AVAX'
+    "WAVAX",
+    "Wrapped AVAX"
   ),
-  [ChainId.BLAST]: new Token(ChainId.BLAST, '0x4300000000000000000000000000000000000004', 18, 'WETH', 'Wrapped Ether'),
-}
+  [ChainId.BLAST]: new Token(
+    ChainId.BLAST,
+    "0x4300000000000000000000000000000000000004",
+    18,
+    "WETH",
+    "Wrapped Ether"
+  ),
+};
 
 export function isCelo(chainId: number): chainId is ChainId.CELO | ChainId.CELO_ALFAJORES {
   return chainId === ChainId.CELO_ALFAJORES || chainId === ChainId.CELO
@@ -500,6 +525,7 @@ const STABLECOINS: { [chainId in ChainId]: Token[] } = {
   [ChainId.CELO_ALFAJORES]: [USDC_CELO],
   [ChainId.GOERLI]: [USDC_GOERLI],
   [ChainId.SEPOLIA]: [USDC_SEPOLIA],
+  [ChainId.NOVA_SEPOLIA]: [],
   [ChainId.AVALANCHE]: [USDC_AVALANCHE],
   [ChainId.GNOSIS]: [],
   [ChainId.MOONBEAM]: [],

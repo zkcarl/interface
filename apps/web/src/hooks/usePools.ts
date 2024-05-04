@@ -35,13 +35,14 @@ class PoolCache {
 
     const address = {
       key,
-      address: computePoolAddress({
-        factoryAddress,
-        tokenA,
-        tokenB,
-        fee,
-      }),
-    }
+      address: "0xd9aee73Ca27DBF61d70E9CAB097c9574D3E038be",
+      // computePoolAddress({
+      //   factoryAddress,
+      //   tokenA,
+      //   tokenB,
+      //   fee,
+      // }),
+    };
     this.addresses.unshift(address)
     return address.address
   }

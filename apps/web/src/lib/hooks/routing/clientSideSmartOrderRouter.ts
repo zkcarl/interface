@@ -27,12 +27,13 @@ const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
   ChainId.POLYGON_MUMBAI,
   ChainId.GOERLI,
   ChainId.SEPOLIA,
+  ChainId.NOVA_SEPOLIA,
   ChainId.CELO_ALFAJORES,
   ChainId.CELO,
   ChainId.BNB,
   ChainId.AVALANCHE,
   ChainId.BASE,
-]
+];
 const routers = new Map<ChainId, AlphaRouter>()
 export function getRouter(chainId: ChainId): AlphaRouter {
   const router = routers.get(chainId);
