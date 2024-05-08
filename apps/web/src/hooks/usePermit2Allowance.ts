@@ -1,4 +1,4 @@
-// import { PERMIT2_ADDRESS } from '@uniswap/permit2-sdk'
+import { PERMIT2_ADDRESS } from '@novaswap/permit2-sdk'
 import { CurrencyAmount, Token } from "@novaswap/sdk-core";
 import { useWeb3React } from '@web3-react/core'
 import { AVERAGE_L1_BLOCK_TIME } from 'constants/chainInfo'
@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { TradeFillType } from 'state/routing/types'
 import { useHasPendingApproval, useHasPendingRevocation, useTransactionAdder } from 'state/transactions/hooks'
 
-const PERMIT2_ADDRESS  = '0x292a0705d5e3674b724f6d9e2daee464aaf0994a';
+// const PERMIT2_ADDRESS  = '0x292a0705d5e3674b724f6d9e2daee464aaf0994a';
 
 enum ApprovalState {
   PENDING,

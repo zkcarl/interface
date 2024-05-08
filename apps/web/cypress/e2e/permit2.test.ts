@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { MaxUint160, MaxUint256 } from '@uniswap/permit2-sdk'
+import { MaxUint160, MaxUint256 } from '@novaswap/permit2-sdk'
 import { CurrencyAmount, Token } from "@novaswap/sdk-core";
 
 import { DAI, USDC_MAINNET, USDT } from '../../src/constants/tokens'

@@ -1,4 +1,4 @@
-import { AllowanceTransfer, MaxAllowanceTransferAmount, PermitSingle } from '@uniswap/permit2-sdk'
+import { AllowanceTransfer, MaxAllowanceTransferAmount, PermitSingle,PERMIT2_ADDRESS} from '@novaswap/permit2-sdk'
 import { CurrencyAmount, Token } from "@novaswap/sdk-core";
 import { useWeb3React } from '@web3-react/core'
 import { useContract } from 'hooks/useContract'
@@ -12,7 +12,7 @@ import { UserRejectedRequestError, toReadableError } from 'utils/errors'
 import { signTypedData } from 'utils/signing'
 import { didUserReject } from 'utils/swapErrorToUserReadableMessage'
 
-const PERMIT2_ADDRESS  = '0x292a0705d5e3674b724f6d9e2daee464aaf0994a';
+// const PERMIT2_ADDRESS  = '0x292a0705d5e3674b724f6d9e2daee464aaf0994a';
 const PERMIT_EXPIRATION = ms(`30d`)
 const PERMIT_SIG_EXPIRATION = ms(`30m`)
 

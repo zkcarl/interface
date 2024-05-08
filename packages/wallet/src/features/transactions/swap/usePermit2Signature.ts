@@ -4,7 +4,7 @@ import {
   MaxUint160,
   PERMIT2_ADDRESS,
   PermitSingle,
-} from '@uniswap/permit2-sdk'
+} from '@novaswap/permit2-sdk'
 import { Currency, CurrencyAmount } from "@novaswap/sdk-core";
 import { UNIVERSAL_ROUTER_ADDRESS } from "@novaswap/universal-router-sdk";
 import dayjs from 'dayjs'

@@ -9,7 +9,7 @@ import { Permit2 } from 'uniswap/src/abis/types'
 import { TransactionStatus } from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
 import { didUserReject } from 'utils/swapErrorToUserReadableMessage'
 
-import { PERMIT2_ADDRESS } from '@uniswap/permit2-sdk'
+import { PERMIT2_ADDRESS } from '@novaswap/permit2-sdk'
 import { BigNumber, ContractTransaction } from 'ethers/lib/ethers'
 import { useContract } from 'hooks/useContract'
 import { useCallback } from 'react'

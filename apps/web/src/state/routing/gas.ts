@@ -1,4 +1,4 @@
-import { MaxUint256, PERMIT2_ADDRESS } from '@uniswap/permit2-sdk'
+import { MaxUint256, PERMIT2_ADDRESS } from '@novaswap/permit2-sdk'
 import { ChainId, Currency } from "@novaswap/sdk-core";
 import { SupportedInterfaceChain } from 'constants/chains'
 import { RPC_PROVIDERS } from 'constants/providers'

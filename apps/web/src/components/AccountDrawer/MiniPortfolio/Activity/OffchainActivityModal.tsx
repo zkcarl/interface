@@ -31,7 +31,7 @@ import { Divider, ThemedText } from "theme/components";
 import { UniswapXOrderStatus } from "types/uniswapx";
 import { ExplorerDataType, getExplorerLink } from "utils/getExplorerLink";
 
-import { PERMIT2_ADDRESS } from "@uniswap/permit2-sdk";
+import { PERMIT2_ADDRESS } from "@novaswap/permit2-sdk";
 import { sendAnalyticsEvent } from "analytics";
 import { cancelMultipleUniswapXOrders } from "components/AccountDrawer/MiniPortfolio/Activity/utils";
 import AlertTriangleFilled from "components/Icons/AlertTriangleFilled";
