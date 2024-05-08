@@ -1,50 +1,63 @@
 import { Interface } from '@ethersproject/abi'
-import { BigintIsh, ChainId, Currency, Token, V3_CORE_FACTORY_ADDRESSES } from '@uniswap/sdk-core'
-import IUniswapV3PoolStateJSON from '@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json'
-import { FeeAmount, Pool, computePoolAddress } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
-import { useContractMultichain } from 'components/AccountDrawer/MiniPortfolio/Pools/hooks'
-import JSBI from 'jsbi'
-import { useMultipleContractSingleData } from 'lib/hooks/multicall'
-import { useEffect, useMemo, useState } from 'react'
-import { IUniswapV3PoolStateInterface } from 'uniswap/src/abis/types/v3/IUniswapV3PoolState'
-import { UniswapV3Pool } from 'uniswap/src/abis/types/v3/UniswapV3Pool'
+import {
+  BigintIsh,
+  ChainId,
+  Currency,
+  Token,
+  V3_CORE_FACTORY_ADDRESSES,
+} from "@novaswap/sdk-core";
+import IUniswapV3PoolStateJSON from "@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json";
+import { FeeAmount, Pool, computePoolAddress } from "@novaswap/v3-sdk";
+import { useWeb3React } from "@web3-react/core";
+import { useContractMultichain } from "components/AccountDrawer/MiniPortfolio/Pools/hooks";
+import JSBI from "jsbi";
+import { useMultipleContractSingleData } from "lib/hooks/multicall";
+import { useEffect, useMemo, useState } from "react";
+import { IUniswapV3PoolStateInterface } from "uniswap/src/abis/types/v3/IUniswapV3PoolState";
+import { UniswapV3Pool } from "uniswap/src/abis/types/v3/UniswapV3Pool";
 
-const POOL_STATE_INTERFACE = new Interface(IUniswapV3PoolStateJSON.abi) as IUniswapV3PoolStateInterface
+const POOL_STATE_INTERFACE = new Interface(
+  IUniswapV3PoolStateJSON.abi,
+) as IUniswapV3PoolStateInterface;
 
 // Classes are expensive to instantiate, so this caches the recently instantiated pools.
 // This avoids re-instantiating pools as the other pools in the same request are loaded.
 class PoolCache {
   // Evict after 128 entries. Empirically, a swap uses 64 entries.
-  private static MAX_ENTRIES = 128
+  private static MAX_ENTRIES = 128;
 
   // These are FIFOs, using unshift/pop. This makes recent entries faster to find.
-  private static pools: Pool[] = []
-  private static addresses: { key: string; address: string }[] = []
+  private static pools: Pool[] = [];
+  private static addresses: { key: string; address: string }[] = [];
 
-  static getPoolAddress(factoryAddress: string, tokenA: Token, tokenB: Token, fee: FeeAmount): string {
+  static getPoolAddress(
+    factoryAddress: string,
+    tokenA: Token,
+    tokenB: Token,
+    fee: FeeAmount,
+  ): string {
     if (this.addresses.length > this.MAX_ENTRIES) {
-      this.addresses = this.addresses.slice(0, this.MAX_ENTRIES / 2)
+      this.addresses = this.addresses.slice(0, this.MAX_ENTRIES / 2);
     }
 
-    const { address: addressA } = tokenA
-    const { address: addressB } = tokenB
-    const key = `${factoryAddress}:${addressA}:${addressB}:${fee.toString()}`
-    const found = this.addresses.find((address) => address.key === key)
-    if (found) return found.address
+    const { address: addressA } = tokenA;
+    const { address: addressB } = tokenB;
+    const key = `${factoryAddress}:${addressA}:${addressB}:${fee.toString()}`;
+    const found = this.addresses.find((address) => address.key === key);
+    if (found) return found.address;
 
     const address = {
       key,
-      address: "0xd9aee73Ca27DBF61d70E9CAB097c9574D3E038be",
-      // computePoolAddress({
-      //   factoryAddress,
-      //   tokenA,
-      //   tokenB,
-      //   fee,
-      // }),
+      // address: "0xd9aee73Ca27DBF61d70E9CAB097c9574D3E038be",
+      address: computePoolAddress({
+        factoryAddress,
+        tokenA,
+        tokenB,
+        fee,
+      }),
     };
-    this.addresses.unshift(address)
-    return address.address
+    this.addresses.unshift(address);
+    return address.address;
   }
 
   static getPool(
@@ -53,10 +66,10 @@ class PoolCache {
     fee: FeeAmount,
     sqrtPriceX96: BigintIsh,
     liquidity: BigintIsh,
-    tick: number
+    tick: number,
   ): Pool {
     if (this.pools.length > this.MAX_ENTRIES) {
-      this.pools = this.pools.slice(0, this.MAX_ENTRIES / 2)
+      this.pools = this.pools.slice(0, this.MAX_ENTRIES / 2);
     }
 
     const found = this.pools.find(
@@ -66,13 +79,13 @@ class PoolCache {
         pool.fee === fee &&
         JSBI.EQ(pool.sqrtRatioX96, sqrtPriceX96) &&
         JSBI.EQ(pool.liquidity, liquidity) &&
-        pool.tickCurrent === tick
-    )
-    if (found) return found
+        pool.tickCurrent === tick,
+    );
+    if (found) return found;
 
-    const pool = new Pool(tokenA, tokenB, fee, sqrtPriceX96, liquidity, tick)
-    this.pools.unshift(pool)
-    return pool
+    const pool = new Pool(tokenA, tokenB, fee, sqrtPriceX96, liquidity, tick);
+    this.pools.unshift(pool);
+    return pool;
   }
 }
 

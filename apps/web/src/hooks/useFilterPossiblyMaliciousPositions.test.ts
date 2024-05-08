@@ -3,7 +3,7 @@ import { CallState } from '@uniswap/redux-multicall'
 import { renderHook } from 'test-utils/render'
 import { PositionDetails } from 'types/position'
 
-import { ChainId, Token, WETH9 } from '@uniswap/sdk-core'
+import { ChainId, Token, WETH9 } from "@novaswap/sdk-core";
 import { DAI } from 'constants/tokens'
 import { useDefaultActiveTokens } from 'hooks/Tokens'
 import { mocked } from 'test-utils/mocked'

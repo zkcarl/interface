@@ -1,119 +1,150 @@
-import { TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
-import ms from 'ms'
-import { useEffect, useState } from 'react'
-import { isFinalizedOrder, usePendingOrders } from 'state/signatures/hooks'
-import { SignatureType, UniswapXOrderDetails } from 'state/signatures/types'
-import { OrderQueryResponse, UniswapXBackendOrder, UniswapXOrderStatus } from 'types/uniswapx'
-import { FeatureFlags } from 'uniswap/src/features/statsig/flags'
-import { useFeatureFlag } from 'uniswap/src/features/statsig/hooks'
-import { OnActivityUpdate } from '../types'
-import { toSerializableReceipt } from '../utils'
+import { TradeType } from "@novaswap/sdk-core";
+import { useWeb3React } from "@web3-react/core";
+import ms from "ms";
+import { useEffect, useState } from "react";
+import { isFinalizedOrder, usePendingOrders } from "state/signatures/hooks";
+import { SignatureType, UniswapXOrderDetails } from "state/signatures/types";
+import {
+  OrderQueryResponse,
+  UniswapXBackendOrder,
+  UniswapXOrderStatus,
+} from "types/uniswapx";
+import { FeatureFlags } from "uniswap/src/features/statsig/flags";
+import { useFeatureFlag } from "uniswap/src/features/statsig/hooks";
+import { OnActivityUpdate } from "../types";
+import { toSerializableReceipt } from "../utils";
 
-const UNISWAP_GATEWAY_DNS_URL = process.env.REACT_APP_UNISWAP_GATEWAY_DNS
+const UNISWAP_GATEWAY_DNS_URL = process.env.REACT_APP_UNISWAP_GATEWAY_DNS;
 if (UNISWAP_GATEWAY_DNS_URL === undefined) {
-  throw new Error(`UNISWAP_GATEWAY_DNS_URL must be defined environment variables`)
+  throw new Error(
+    `UNISWAP_GATEWAY_DNS_URL must be defined environment variables`,
+  );
 }
 
 async function fetchStatuses(
   orders: UniswapXOrderDetails[],
   filter: (order: UniswapXOrderDetails) => boolean,
-  path: (hashes: string[]) => string
+  path: (hashes: string[]) => string,
 ): Promise<UniswapXBackendOrder[]> {
-  const hashes = orders.filter(filter).map((order) => order.orderHash)
+  const hashes = orders.filter(filter).map((order) => order.orderHash);
   if (!hashes || hashes.length === 0) {
-    return []
+    return [];
   }
-  const baseURL = UNISWAP_GATEWAY_DNS_URL
-  const result = await global.fetch(`${baseURL}${path(hashes)}`)
-  const statuses = (await result.json()) as OrderQueryResponse
-  return statuses.orders
+  const baseURL = UNISWAP_GATEWAY_DNS_URL;
+  const result = await global.fetch(`${baseURL}${path(hashes)}`);
+  const statuses = (await result.json()) as OrderQueryResponse;
+  return statuses.orders;
 }
 
-async function fetchLimitStatuses(account: string, orders: UniswapXOrderDetails[]): Promise<UniswapXBackendOrder[]> {
+async function fetchLimitStatuses(
+  account: string,
+  orders: UniswapXOrderDetails[],
+): Promise<UniswapXBackendOrder[]> {
   return fetchStatuses(
     orders,
     (order) => order.type === SignatureType.SIGN_LIMIT,
-    (hashes) => `/limit-orders?swapper=${account}&orderHashes=${hashes}`
-  )
+    (hashes) => `/limit-orders?swapper=${account}&orderHashes=${hashes}`,
+  );
 }
 
-async function fetchOrderStatuses(account: string, orders: UniswapXOrderDetails[]): Promise<UniswapXBackendOrder[]> {
+async function fetchOrderStatuses(
+  account: string,
+  orders: UniswapXOrderDetails[],
+): Promise<UniswapXBackendOrder[]> {
   return fetchStatuses(
     orders,
-    (order) => order.type === SignatureType.SIGN_UNISWAPX_ORDER || order.type === SignatureType.SIGN_UNISWAPX_V2_ORDER,
-    (hashes) => `/orders?swapper=${account}&orderHashes=${hashes}`
-  )
+    (order) =>
+      order.type === SignatureType.SIGN_UNISWAPX_ORDER ||
+      order.type === SignatureType.SIGN_UNISWAPX_V2_ORDER,
+    (hashes) => `/orders?swapper=${account}&orderHashes=${hashes}`,
+  );
 }
 
-const OFF_CHAIN_ORDER_STATUS_POLLING_INITIAL_INTERVAL = ms(`2s`)
+const OFF_CHAIN_ORDER_STATUS_POLLING_INITIAL_INTERVAL = ms(`2s`);
 
 export function usePollPendingOrders(onActivityUpdate: OnActivityUpdate) {
-  const realtimeEnabled = useFeatureFlag(FeatureFlags.Realtime)
+  const realtimeEnabled = useFeatureFlag(FeatureFlags.Realtime);
 
-  const { account, provider } = useWeb3React()
-  const pendingOrders = usePendingOrders()
+  const { account, provider } = useWeb3React();
+  const pendingOrders = usePendingOrders();
 
-  const [currentDelay, setCurrentDelay] = useState(OFF_CHAIN_ORDER_STATUS_POLLING_INITIAL_INTERVAL)
+  const [currentDelay, setCurrentDelay] = useState(
+    OFF_CHAIN_ORDER_STATUS_POLLING_INITIAL_INTERVAL,
+  );
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout
+    let timeout: NodeJS.Timeout;
     async function getOrderStatuses() {
-      if (!account || pendingOrders.length === 0) return
+      if (!account || pendingOrders.length === 0) return;
 
       // Stop polling if all orders in our queue have "finalized" states
       if (pendingOrders.every((order) => isFinalizedOrder(order.status))) {
-        clearTimeout(timeout)
-        return
+        clearTimeout(timeout);
+        return;
       }
       try {
         const statuses = (
-          await Promise.all([fetchOrderStatuses(account, pendingOrders), fetchLimitStatuses(account, pendingOrders)])
-        ).flat()
+          await Promise.all([
+            fetchOrderStatuses(account, pendingOrders),
+            fetchLimitStatuses(account, pendingOrders),
+          ])
+        ).flat();
 
         pendingOrders.forEach(async (pendingOrder) => {
-          const updatedOrder = statuses.find((order) => order.orderHash === pendingOrder.orderHash)
-          if (!updatedOrder) return
+          const updatedOrder = statuses.find(
+            (order) => order.orderHash === pendingOrder.orderHash,
+          );
+          if (!updatedOrder) return;
 
-          let receipt = undefined
-          let updatedSwapInfo = undefined
+          let receipt = undefined;
+          let updatedSwapInfo = undefined;
 
           if (updatedOrder?.orderStatus === UniswapXOrderStatus.FILLED) {
             // Updates the order to contain the settled/on-chain output amount
             if (pendingOrder.swapInfo.tradeType === TradeType.EXACT_INPUT) {
               updatedSwapInfo = {
                 ...pendingOrder.swapInfo,
-                settledOutputCurrencyAmountRaw: updatedOrder.settledAmounts?.[0]?.amountOut,
-              }
+                settledOutputCurrencyAmountRaw:
+                  updatedOrder.settledAmounts?.[0]?.amountOut,
+              };
             }
             // TODO(WEB-3962): Handle settled EXACT_OUTPUT amounts
 
             if (provider) {
-              receipt = toSerializableReceipt(await provider?.getTransactionReceipt(updatedOrder.txHash))
+              receipt = toSerializableReceipt(
+                await provider?.getTransactionReceipt(updatedOrder.txHash),
+              );
             }
           }
           onActivityUpdate({
-            type: 'signature',
+            type: "signature",
             updatedStatus: updatedOrder.orderStatus,
             originalSignature: pendingOrder,
             receipt,
             chainId: pendingOrder.chainId,
             updatedSwapInfo,
-          })
-        })
+          });
+        });
       } catch (e) {
-        console.error('Error fetching order statuses', e)
+        console.error("Error fetching order statuses", e);
       }
-      setCurrentDelay((currentDelay) => Math.min(currentDelay * 2, ms('30s')))
-      timeout = setTimeout(getOrderStatuses, currentDelay)
+      setCurrentDelay((currentDelay) => Math.min(currentDelay * 2, ms("30s")));
+      timeout = setTimeout(getOrderStatuses, currentDelay);
     }
 
     if (!realtimeEnabled) {
-      timeout = setTimeout(getOrderStatuses, currentDelay)
-      return () => clearTimeout(timeout)
+      timeout = setTimeout(getOrderStatuses, currentDelay);
+      return () => clearTimeout(timeout);
     }
-    return
-  }, [account, currentDelay, onActivityUpdate, pendingOrders, provider, realtimeEnabled])
+    return;
+  }, [
+    account,
+    currentDelay,
+    onActivityUpdate,
+    pendingOrders,
+    provider,
+    realtimeEnabled,
+  ]);
 
-  return null
+  return null;
 }

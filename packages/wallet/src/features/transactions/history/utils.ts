@@ -1,5 +1,5 @@
-import { Token } from '@uniswap/sdk-core'
-import dayjs from 'dayjs'
+import { Token } from "@novaswap/sdk-core";
+import dayjs from "dayjs";
 import {
   Amount,
   Chain,
@@ -7,32 +7,35 @@ import {
   FeedTransactionListQuery,
   TokenStandard,
   TransactionListQuery,
-} from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
-import { CurrencyId } from 'uniswap/src/types/currency'
-import { getNativeAddress } from 'wallet/src/constants/addresses'
-import { fromGraphQLChain } from 'wallet/src/features/chains/utils'
-import { CurrencyIdToVisibility } from 'wallet/src/features/favorites/slice'
+} from "uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks";
+import { CurrencyId } from "uniswap/src/types/currency";
+import { getNativeAddress } from "wallet/src/constants/addresses";
+import { fromGraphQLChain } from "wallet/src/features/chains/utils";
+import { CurrencyIdToVisibility } from "wallet/src/features/favorites/slice";
 import {
   FORMAT_DATE_MONTH,
   FORMAT_DATE_MONTH_YEAR,
   LocalizedDayjs,
-} from 'wallet/src/features/language/localizedDayjs'
-import { NativeCurrency } from 'wallet/src/features/tokens/NativeCurrency'
-import extractTransactionDetails from 'wallet/src/features/transactions/history/conversion/extractTransactionDetails'
+} from "wallet/src/features/language/localizedDayjs";
+import { NativeCurrency } from "wallet/src/features/tokens/NativeCurrency";
+import extractTransactionDetails from "wallet/src/features/transactions/history/conversion/extractTransactionDetails";
 import {
   TransactionDetails,
   TransactionListQueryResponse,
   TransactionStatus,
   TransactionType,
-} from 'wallet/src/features/transactions/types'
-import { buildCurrencyId } from 'wallet/src/utils/currencyId'
-import { ValueType, getCurrencyAmount } from 'wallet/src/utils/getCurrencyAmount'
+} from "wallet/src/features/transactions/types";
+import { buildCurrencyId } from "wallet/src/utils/currencyId";
+import {
+  ValueType,
+  getCurrencyAmount,
+} from "wallet/src/utils/getCurrencyAmount";
 
 export interface AllFormattedTransactions {
-  last24hTransactionList: TransactionDetails[]
+  last24hTransactionList: TransactionDetails[];
   // Maps year <-> TransactionSummaryInfo[] for all months before current month
-  priorByMonthTransactionList: Record<string, TransactionDetails[]>
-  pending: TransactionDetails[]
+  priorByMonthTransactionList: Record<string, TransactionDetails[]>;
+  pending: TransactionDetails[];
 }
 
 export function formatTransactionsByDate(
@@ -40,8 +43,8 @@ export function formatTransactionsByDate(
   localizedDayjs: LocalizedDayjs
 ): AllFormattedTransactions {
   // timestamp in ms for start of time periods
-  const msTimestampCutoff24h = dayjs().subtract(24, 'hour').valueOf()
-  const msTimestampCutoffYear = dayjs().startOf('year').valueOf()
+  const msTimestampCutoff24h = dayjs().subtract(24, "hour").valueOf();
+  const msTimestampCutoffYear = dayjs().startOf("year").valueOf();
 
   // Segment by time periods.
   const [pending, last24hTransactionList, olderThan24HTransactionList] = (
@@ -54,46 +57,46 @@ export function formatTransactionsByDate(
         item.status === TransactionStatus.Cancelling ||
         item.status === TransactionStatus.Replacing
       ) {
-        accum[0].push(item)
+        accum[0].push(item);
       } else if (item.addedTime > msTimestampCutoff24h) {
-        accum[1].push(item)
+        accum[1].push(item);
       } else {
-        accum[2].push(item)
+        accum[2].push(item);
       }
-      return accum
+      return accum;
     },
     [[], [], []]
-  )
+  );
 
   // sort pending txns based on nonce, highest nonce first for reverse chronological order
   const pendingSorted = pending.sort((a, b) => {
-    const nonceA = a.options?.request?.nonce
-    const nonceB = b.options?.request?.nonce
-    return nonceA && nonceB ? (nonceA < nonceB ? 1 : -1) : 1
-  })
+    const nonceA = a.options?.request?.nonce;
+    const nonceB = b.options?.request?.nonce;
+    return nonceA && nonceB ? (nonceA < nonceB ? 1 : -1) : 1;
+  });
 
   // For all transactions before last 24 hours, group by month
   const priorByMonthTransactionList = olderThan24HTransactionList.reduce(
     (accum: Record<string, TransactionDetails[]>, item) => {
-      const isPreviousYear = item.addedTime < msTimestampCutoffYear
+      const isPreviousYear = item.addedTime < msTimestampCutoffYear;
       const key = localizedDayjs(item.addedTime)
         // If in a previous year, append year to key string, else just use month
         // This key is used as the section title in TransactionList
         .format(isPreviousYear ? FORMAT_DATE_MONTH_YEAR : FORMAT_DATE_MONTH)
-        .toString()
-      const currentMonthList = accum[key] ?? []
-      currentMonthList.push(item)
-      accum[key] = currentMonthList
-      return accum
+        .toString();
+      const currentMonthList = accum[key] ?? [];
+      currentMonthList.push(item);
+      accum[key] = currentMonthList;
+      return accum;
     },
     {}
-  )
+  );
 
   return {
     pending: pendingSorted,
     last24hTransactionList,
     priorByMonthTransactionList,
-  }
+  };
 }
 
 /**
@@ -106,22 +109,29 @@ export function parseDataResponseToTransactionDetails(
   tokenVisibilityOverrides?: CurrencyIdToVisibility
 ): TransactionDetails[] | undefined {
   if (data.portfolios?.[0]?.assetActivities) {
-    return data.portfolios[0].assetActivities.reduce((accum: TransactionDetails[], t) => {
-      if (t?.details?.__typename === 'TransactionDetails') {
-        const parsed = extractTransactionDetails(t as TransactionListQueryResponse)
-        const isSpam = parsed?.typeInfo.isSpam
-        const currencyId = extractCurrencyIdFromTx(parsed)
-        const spamOverride = currencyId ? tokenVisibilityOverrides?.[currencyId]?.isVisible : false
+    return data.portfolios[0].assetActivities.reduce(
+      (accum: TransactionDetails[], t) => {
+        if (t?.details?.__typename === "TransactionDetails") {
+          const parsed = extractTransactionDetails(
+            t as TransactionListQueryResponse
+          );
+          const isSpam = parsed?.typeInfo.isSpam;
+          const currencyId = extractCurrencyIdFromTx(parsed);
+          const spamOverride = currencyId
+            ? tokenVisibilityOverrides?.[currencyId]?.isVisible
+            : false;
 
-        if (parsed && !(hideSpamTokens && isSpam && !spamOverride)) {
-          accum.push(parsed)
+          if (parsed && !(hideSpamTokens && isSpam && !spamOverride)) {
+            accum.push(parsed);
+          }
         }
-      }
 
-      return accum
-    }, [])
+        return accum;
+      },
+      []
+    );
   }
-  return undefined
+  return undefined;
 }
 
 /**
@@ -132,28 +142,35 @@ export function parseDataResponseToFeedTransactionDetails(
   data: FeedTransactionListQuery,
   hideSpamTokens?: boolean
 ): TransactionDetails[] | undefined {
-  const allTransactions: TransactionDetails[] = []
+  const allTransactions: TransactionDetails[] = [];
 
   for (const portfolio of data.portfolios ?? []) {
     if (portfolio?.assetActivities) {
-      const transactions = portfolio.assetActivities.reduce((accum: TransactionDetails[], t) => {
-        if (t?.details?.__typename === 'TransactionDetails') {
-          const parsed = extractTransactionDetails(t as TransactionListQueryResponse)
-          const isSpam = parsed?.typeInfo.isSpam
+      const transactions = portfolio.assetActivities.reduce(
+        (accum: TransactionDetails[], t) => {
+          if (t?.details?.__typename === "TransactionDetails") {
+            const parsed = extractTransactionDetails(
+              t as TransactionListQueryResponse
+            );
+            const isSpam = parsed?.typeInfo.isSpam;
 
-          if (parsed && !(hideSpamTokens && isSpam)) {
-            accum.push({ ...parsed, ownerAddress: portfolio.ownerAddress })
+            if (parsed && !(hideSpamTokens && isSpam)) {
+              accum.push({ ...parsed, ownerAddress: portfolio.ownerAddress });
+            }
           }
-        }
-        return accum
-      }, [])
-      allTransactions.push(...transactions)
+          return accum;
+        },
+        []
+      );
+      allTransactions.push(...transactions);
     }
   }
 
-  const sortedTransactions = allTransactions.sort((a, b) => b.addedTime - a.addedTime)
+  const sortedTransactions = allTransactions.sort(
+    (a, b) => b.addedTime - a.addedTime
+  );
 
-  return sortedTransactions
+  return sortedTransactions;
 }
 
 /**
@@ -171,9 +188,9 @@ export function deriveCurrencyAmountFromAssetResponse(
   decimals: Maybe<number>,
   quantity: string
 ): string {
-  const chainId = fromGraphQLChain(chain)
+  const chainId = fromGraphQLChain(chain);
   if (!chainId) {
-    return ''
+    return "";
   }
 
   const currency =
@@ -181,15 +198,15 @@ export function deriveCurrencyAmountFromAssetResponse(
       ? NativeCurrency.onChain(chainId)
       : address && decimals
       ? new Token(chainId, address, decimals)
-      : undefined
+      : undefined;
 
   const currencyAmount = getCurrencyAmount({
     value: quantity,
     valueType: ValueType.Exact,
     currency,
-  })
+  });
 
-  return currencyAmount?.quotient.toString() ?? ''
+  return currencyAmount?.quotient.toString() ?? "";
 }
 
 /**
@@ -202,18 +219,18 @@ export function getAddressFromAsset({
   chain,
   address,
 }: {
-  tokenStandard: TokenStandard
-  chain: Chain | undefined
-  address: Maybe<string>
+  tokenStandard: TokenStandard;
+  chain: Chain | undefined;
+  address: Maybe<string>;
 }): Maybe<string> {
-  const supportedChainId = fromGraphQLChain(chain)
+  const supportedChainId = fromGraphQLChain(chain);
   if (!supportedChainId) {
-    return null
+    return null;
   }
   if (tokenStandard === TokenStandard.Native) {
-    return getNativeAddress(supportedChainId)
+    return getNativeAddress(supportedChainId);
   }
-  return address
+  return address;
 }
 
 /**
@@ -224,12 +241,16 @@ export function getAddressFromAsset({
 export function parseUSDValueFromAssetChange(
   transactedValue: Maybe<Partial<Amount>>
 ): number | undefined {
-  return transactedValue?.currency === Currency.Usd ? transactedValue.value ?? undefined : undefined
+  return transactedValue?.currency === Currency.Usd
+    ? transactedValue.value ?? undefined
+    : undefined;
 }
 
-function extractCurrencyIdFromTx(transaction: TransactionDetails | null): CurrencyId | undefined {
+function extractCurrencyIdFromTx(
+  transaction: TransactionDetails | null
+): CurrencyId | undefined {
   if (!transaction) {
-    return undefined
+    return undefined;
   }
 
   if (
@@ -237,11 +258,14 @@ function extractCurrencyIdFromTx(transaction: TransactionDetails | null): Curren
     transaction.typeInfo.type === TransactionType.Send ||
     transaction.typeInfo.type === TransactionType.Receive
   ) {
-    return buildCurrencyId(transaction.chainId, transaction.typeInfo.tokenAddress)
+    return buildCurrencyId(
+      transaction.chainId,
+      transaction.typeInfo.tokenAddress
+    );
   }
 
   if (transaction.typeInfo.type === TransactionType.Swap) {
     // We only care about output currency because that's the net new asset
-    return transaction.typeInfo.outputCurrencyId
+    return transaction.typeInfo.outputCurrencyId;
   }
 }

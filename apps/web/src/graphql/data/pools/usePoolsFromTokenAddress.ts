@@ -1,15 +1,25 @@
-import { ChainId } from '@uniswap/sdk-core'
-import { PoolTableSortState, TablePool, V2_BIPS, calculateOneDayApr, sortPools } from 'graphql/data/pools/useTopPools'
-import { chainIdToBackendName } from 'graphql/data/util'
-import { useCallback, useMemo, useRef } from 'react'
+import { ChainId } from "@novaswap/sdk-core";
+import {
+  PoolTableSortState,
+  TablePool,
+  V2_BIPS,
+  calculateOneDayApr,
+  sortPools,
+} from "graphql/data/pools/useTopPools";
+import { chainIdToBackendName } from "graphql/data/util";
+import { useCallback, useMemo, useRef } from "react";
 import {
   useTopV2PairsQuery,
   useTopV3PoolsQuery,
-} from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
+} from "uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks";
 
-const DEFAULT_QUERY_SIZE = 20
+const DEFAULT_QUERY_SIZE = 20;
 
-export function usePoolsFromTokenAddress(tokenAddress: string, sortState: PoolTableSortState, chainId?: ChainId) {
+export function usePoolsFromTokenAddress(
+  tokenAddress: string,
+  sortState: PoolTableSortState,
+  chainId?: ChainId,
+) {
   const {
     loading: loadingV3,
     error: errorV3,
@@ -21,7 +31,7 @@ export function usePoolsFromTokenAddress(tokenAddress: string, sortState: PoolTa
       tokenAddress,
       chain: chainIdToBackendName(chainId),
     },
-  })
+  });
 
   const {
     loading: loadingV2,
@@ -34,52 +44,68 @@ export function usePoolsFromTokenAddress(tokenAddress: string, sortState: PoolTa
       tokenAddress,
     },
     skip: chainId !== ChainId.MAINNET,
-  })
-  const loading = loadingV3 || loadingV2
+  });
+  const loading = loadingV3 || loadingV2;
 
-  const loadingMoreV3 = useRef(false)
-  const loadingMoreV2 = useRef(false)
-  const sizeRef = useRef(DEFAULT_QUERY_SIZE)
+  const loadingMoreV3 = useRef(false);
+  const loadingMoreV2 = useRef(false);
+  const sizeRef = useRef(DEFAULT_QUERY_SIZE);
   const loadMore = useCallback(
     ({ onComplete }: { onComplete?: () => void }) => {
-      if (loadingMoreV3.current || (loadingMoreV2.current && chainId === ChainId.MAINNET)) {
-        return
+      if (
+        loadingMoreV3.current ||
+        (loadingMoreV2.current && chainId === ChainId.MAINNET)
+      ) {
+        return;
       }
-      loadingMoreV3.current = true
-      loadingMoreV2.current = true
-      sizeRef.current += DEFAULT_QUERY_SIZE
+      loadingMoreV3.current = true;
+      loadingMoreV2.current = true;
+      sizeRef.current += DEFAULT_QUERY_SIZE;
       fetchMoreV3({
         variables: {
-          cursor: dataV3?.topV3Pools?.[dataV3.topV3Pools.length - 1]?.totalLiquidity?.value,
+          cursor:
+            dataV3?.topV3Pools?.[dataV3.topV3Pools.length - 1]?.totalLiquidity
+              ?.value,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          if (!fetchMoreResult || !prev || !Object.keys(prev).length) return prev
-          if (!loadingMoreV2.current || chainId !== ChainId.MAINNET) onComplete?.()
+          if (!fetchMoreResult || !prev || !Object.keys(prev).length)
+            return prev;
+          if (!loadingMoreV2.current || chainId !== ChainId.MAINNET)
+            onComplete?.();
           const mergedData = {
-            topV3Pools: [...(prev.topV3Pools ?? []).slice(), ...(fetchMoreResult.topV3Pools ?? []).slice()],
-          }
-          loadingMoreV3.current = false
-          return mergedData
+            topV3Pools: [
+              ...(prev.topV3Pools ?? []).slice(),
+              ...(fetchMoreResult.topV3Pools ?? []).slice(),
+            ],
+          };
+          loadingMoreV3.current = false;
+          return mergedData;
         },
-      })
+      });
       chainId === ChainId.MAINNET &&
         fetchMoreV2({
           variables: {
-            cursor: dataV2?.topV2Pairs?.[dataV2.topV2Pairs.length - 1]?.totalLiquidity?.value,
+            cursor:
+              dataV2?.topV2Pairs?.[dataV2.topV2Pairs.length - 1]?.totalLiquidity
+                ?.value,
           },
           updateQuery: (prev, { fetchMoreResult }) => {
-            if (!fetchMoreResult || !prev || !Object.keys(prev).length) return prev
-            if (!loadingMoreV3.current) onComplete?.()
+            if (!fetchMoreResult || !prev || !Object.keys(prev).length)
+              return prev;
+            if (!loadingMoreV3.current) onComplete?.();
             const mergedData = {
-              topV2Pairs: [...(prev.topV2Pairs ?? []).slice(), ...(fetchMoreResult.topV2Pairs ?? []).slice()],
-            }
-            loadingMoreV2.current = false
-            return mergedData
+              topV2Pairs: [
+                ...(prev.topV2Pairs ?? []).slice(),
+                ...(fetchMoreResult.topV2Pairs ?? []).slice(),
+              ],
+            };
+            loadingMoreV2.current = false;
+            return mergedData;
           },
-        })
+        });
     },
-    [chainId, dataV2?.topV2Pairs, dataV3?.topV3Pools, fetchMoreV2, fetchMoreV3]
-  )
+    [chainId, dataV2?.topV2Pairs, dataV3?.topV3Pools, fetchMoreV2, fetchMoreV3],
+  );
 
   return useMemo(() => {
     const topV3Pools: TablePool[] =
@@ -92,11 +118,15 @@ export function usePoolsFromTokenAddress(tokenAddress: string, sortState: PoolTa
           tvl: pool.totalLiquidity?.value,
           volume24h: pool.volume24h?.value,
           volumeWeek: pool.volumeWeek?.value,
-          oneDayApr: calculateOneDayApr(pool.volume24h?.value, pool.totalLiquidity?.value, pool.feeTier),
+          oneDayApr: calculateOneDayApr(
+            pool.volume24h?.value,
+            pool.totalLiquidity?.value,
+            pool.feeTier,
+          ),
           feeTier: pool.feeTier,
           protocolVersion: pool.protocolVersion,
-        } as TablePool
-      }) ?? []
+        } as TablePool;
+      }) ?? [];
     const topV2Pairs: TablePool[] =
       dataV2?.topV2Pairs?.map((pool) => {
         return {
@@ -107,13 +137,28 @@ export function usePoolsFromTokenAddress(tokenAddress: string, sortState: PoolTa
           tvl: pool.totalLiquidity?.value,
           volume24h: pool.volume24h?.value,
           volumeWeek: pool.volumeWeek?.value,
-          oneDayApr: calculateOneDayApr(pool.volume24h?.value, pool.totalLiquidity?.value, V2_BIPS),
+          oneDayApr: calculateOneDayApr(
+            pool.volume24h?.value,
+            pool.totalLiquidity?.value,
+            V2_BIPS,
+          ),
           feeTier: V2_BIPS,
           protocolVersion: pool.protocolVersion,
-        } as TablePool
-      }) ?? []
+        } as TablePool;
+      }) ?? [];
 
-    const pools = sortPools([...topV3Pools, ...topV2Pairs], sortState).slice(0, sizeRef.current)
-    return { loading, errorV2, errorV3, pools, loadMore }
-  }, [dataV2?.topV2Pairs, dataV3?.topV3Pools, errorV2, errorV3, loadMore, loading, sortState])
+    const pools = sortPools([...topV3Pools, ...topV2Pairs], sortState).slice(
+      0,
+      sizeRef.current,
+    );
+    return { loading, errorV2, errorV3, pools, loadMore };
+  }, [
+    dataV2?.topV2Pairs,
+    dataV3?.topV3Pools,
+    errorV2,
+    errorV3,
+    loadMore,
+    loading,
+    sortState,
+  ]);
 }

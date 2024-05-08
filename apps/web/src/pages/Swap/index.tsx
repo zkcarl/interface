@@ -1,5 +1,5 @@
 import { InterfacePageName } from '@uniswap/analytics-events'
-import { ChainId, Currency } from '@uniswap/sdk-core'
+import { ChainId, Currency } from "@novaswap/sdk-core";
 import { useWeb3React } from '@web3-react/core'
 import { Trace } from 'analytics'
 import { NetworkAlert } from 'components/NetworkAlert/NetworkAlert'
@@ -42,6 +42,7 @@ export default function SwapPage({ className }: { className?: string }) {
   const supportedChainId = asSupportedChain(connectedChainId)
   const chainId = supportedChainId || ChainId.MAINNET
 
+  console.log("SwapPage", chainId, supportedChainId, connectedChainId);
   const parsedQs = useParsedQueryString()
   const parsedCurrencyState = useMemo(() => {
     return queryParametersToCurrencyState(parsedQs)

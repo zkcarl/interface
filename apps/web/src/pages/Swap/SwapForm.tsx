@@ -6,8 +6,8 @@ import {
   SharedEventName,
   SwapEventName,
 } from '@uniswap/analytics-events'
-import { Currency, CurrencyAmount, Token } from '@uniswap/sdk-core'
-import { UNIVERSAL_ROUTER_ADDRESS } from '@uniswap/universal-router-sdk'
+import { Currency, CurrencyAmount, Token } from "@novaswap/sdk-core";
+import { UNIVERSAL_ROUTER_ADDRESS } from "@novaswap/universal-router-sdk";
 import { useWeb3React } from '@web3-react/core'
 import { Trace, TraceEvent, sendAnalyticsEvent, useTrace } from 'analytics'
 import { useToggleAccountDrawer } from 'components/AccountDrawer/MiniPortfolio/hooks'
@@ -85,9 +85,7 @@ export function SwapForm({ disableTokenInputs = false, onCurrencyChange }: SwapF
   const { chainId, prefilledState, currencyState } = useSwapAndLimitContext()
   const { swapState, setSwapState, derivedSwapInfo } = useSwapContext()
   const { typedValue, independentField } = swapState
-  console.log('derivedSwapInfo++++++++',derivedSwapInfo,chainId)
-
-  console.log(connectedChainId, chainId,"connectedChainId");
+  console.log("derivedSwapInfo++++++++", derivedSwapInfo, chainId);
   // token warning stuff
   const parsedQs = useParsedQueryString();
   const prefilledCurrencies = useMemo(() => {

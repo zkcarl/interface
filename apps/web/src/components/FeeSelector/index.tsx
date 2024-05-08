@@ -1,6 +1,6 @@
 import { FeePoolSelectAction, LiquidityEventName } from '@uniswap/analytics-events'
-import { Currency } from '@uniswap/sdk-core'
-import { FeeAmount } from '@uniswap/v3-sdk'
+import { Currency } from "@novaswap/sdk-core";
+import { FeeAmount } from "@novaswap/v3-sdk";
 import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, useTrace } from 'analytics'
 import { ButtonGray } from 'components/Button'

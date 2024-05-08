@@ -1,16 +1,16 @@
-import { ChainId as MockChainId } from '@uniswap/sdk-core'
+import { ChainId as MockChainId } from "@novaswap/sdk-core";
 import {
   DAI as MockDAI,
   USDC_MAINNET as MockUSDC_MAINNET,
   USDC_OPTIMISM as MockUSDC_OPTIMISM,
   USDT as MockUSDT,
   WETH_POLYGON as MockWETH_POLYGON,
-} from 'constants/tokens'
-import { renderHook } from 'test-utils/render'
+} from "constants/tokens";
+import { renderHook } from "test-utils/render";
 
-import { useAllTokensMultichain } from './Tokens'
+import { useAllTokensMultichain } from "./Tokens";
 
-jest.mock('../state/lists/hooks.ts', () => {
+jest.mock("../state/lists/hooks.ts", () => {
   return {
     useCombinedTokenMapFromUrls: () => ({
       [MockChainId.MAINNET]: {
@@ -21,10 +21,10 @@ jest.mock('../state/lists/hooks.ts', () => {
         [MockWETH_POLYGON.address]: { token: MockWETH_POLYGON },
       },
     }),
-  }
-})
+  };
+});
 
-jest.mock('state/hooks.ts', () => {
+jest.mock("state/hooks.ts", () => {
   return {
     useAppSelector: () => ({
       [MockChainId.MAINNET]: {
@@ -35,12 +35,12 @@ jest.mock('state/hooks.ts', () => {
         [MockUSDC_OPTIMISM.address]: MockUSDC_OPTIMISM,
       },
     }),
-  }
-})
+  };
+});
 
-describe('useAllTokensMultichain', () => {
-  it('should return multi-chain tokens from lists and userAddedTokens', () => {
-    const { result } = renderHook(() => useAllTokensMultichain())
+describe("useAllTokensMultichain", () => {
+  it("should return multi-chain tokens from lists and userAddedTokens", () => {
+    const { result } = renderHook(() => useAllTokensMultichain());
 
     expect(result.current).toStrictEqual({
       [MockChainId.MAINNET]: {
@@ -54,6 +54,6 @@ describe('useAllTokensMultichain', () => {
       [MockChainId.OPTIMISM]: {
         [MockUSDC_OPTIMISM.address]: MockUSDC_OPTIMISM,
       },
-    })
-  })
-})
+    });
+  });
+});

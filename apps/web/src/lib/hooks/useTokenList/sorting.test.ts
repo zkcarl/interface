@@ -1,48 +1,48 @@
-import { ChainId, Token as InterfaceToken } from '@uniswap/sdk-core'
-import { DAI, USDC_MAINNET, USDT, WBTC, nativeOnChain } from 'constants/tokens'
+import { ChainId, Token as InterfaceToken } from "@novaswap/sdk-core";
+import { DAI, USDC_MAINNET, USDT, WBTC, nativeOnChain } from "constants/tokens";
 import {
   Chain,
   Currency,
   Token,
   TokenBalance,
   TokenStandard,
-} from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
+} from "uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks";
 
-import { getSortedPortfolioTokens } from './sorting'
+import { getSortedPortfolioTokens } from "./sorting";
 
 const nativeToken: Token = {
-  id: 'native-token',
+  id: "native-token",
   chain: Chain.Ethereum,
   standard: TokenStandard.Native,
   decimals: 18,
-  address: 'ETH',
-}
+  address: "ETH",
+};
 
 const nonnativeToken = (token: InterfaceToken) => ({
-  id: 'nonnative-token',
+  id: "nonnative-token",
   chain: Chain.Ethereum,
   standard: TokenStandard.Erc20,
   address: token.address,
   decimals: token.decimals,
   name: token.name,
   symbol: token.symbol,
-})
+});
 
 const tokens: TokenBalance[] = [
   // 0.5 ETH
   {
-    id: 'low-balance-native',
-    ownerAddress: '',
-    __typename: 'TokenBalance',
+    id: "low-balance-native",
+    ownerAddress: "",
+    __typename: "TokenBalance",
     denominatedValue: {
-      id: '',
+      id: "",
       value: 0.5,
     },
     tokenProjectMarket: {
-      id: '',
+      id: "",
       currency: Currency.Eth,
       tokenProject: {
-        id: '',
+        id: "",
         tokens: [nativeToken],
         isSpam: false,
       },
@@ -51,19 +51,19 @@ const tokens: TokenBalance[] = [
   },
   // 0.01 DAI
   {
-    id: 'low-balance-nonnative',
-    ownerAddress: '',
-    __typename: 'TokenBalance',
+    id: "low-balance-nonnative",
+    ownerAddress: "",
+    __typename: "TokenBalance",
     denominatedValue: {
-      id: '',
+      id: "",
       currency: Currency.Usd,
       value: 0.01,
     },
     tokenProjectMarket: {
-      id: '',
+      id: "",
       currency: Currency.Eth,
       tokenProject: {
-        id: '',
+        id: "",
         tokens: [nonnativeToken(DAI)],
         isSpam: false,
       },
@@ -72,18 +72,18 @@ const tokens: TokenBalance[] = [
   },
   // 100 USDC, but marked as spam
   {
-    id: 'spam',
-    ownerAddress: '',
-    __typename: 'TokenBalance',
+    id: "spam",
+    ownerAddress: "",
+    __typename: "TokenBalance",
     denominatedValue: {
-      id: '',
+      id: "",
       value: 100,
     },
     tokenProjectMarket: {
-      id: '',
+      id: "",
       currency: Currency.Eth,
       tokenProject: {
-        id: '',
+        id: "",
         tokens: [nonnativeToken(USDC_MAINNET)],
         isSpam: true,
       },
@@ -92,18 +92,18 @@ const tokens: TokenBalance[] = [
   },
   // 100 USDT
   {
-    id: 'valid',
-    ownerAddress: '',
-    __typename: 'TokenBalance',
+    id: "valid",
+    ownerAddress: "",
+    __typename: "TokenBalance",
     denominatedValue: {
-      id: '',
+      id: "",
       value: 100,
     },
     tokenProjectMarket: {
-      id: '',
+      id: "",
       currency: Currency.Eth,
       tokenProject: {
-        id: '',
+        id: "",
         tokens: [nonnativeToken(USDT)],
         isSpam: false,
       },
@@ -112,45 +112,45 @@ const tokens: TokenBalance[] = [
   },
   // empty balance for WBTC
   {
-    id: 'undefined-value',
-    ownerAddress: '',
-    __typename: 'TokenBalance',
+    id: "undefined-value",
+    ownerAddress: "",
+    __typename: "TokenBalance",
     denominatedValue: {
-      id: '',
+      id: "",
       // @ts-ignore this is evidently possible but not represented in our types
       value: undefined,
     },
     tokenProjectMarket: {
-      id: '',
+      id: "",
       currency: Currency.Eth,
       tokenProject: {
-        id: '',
+        id: "",
         tokens: [nonnativeToken(WBTC)],
         isSpam: false,
       },
     },
     token: nonnativeToken(WBTC),
   },
-]
+];
 
-describe('sorting', () => {
-  describe('getSortedPortfolioTokens', () => {
-    it('should return an empty array if portfolioTokenBalances is undefined', () => {
-      const result = getSortedPortfolioTokens(undefined, {}, ChainId.MAINNET)
-      expect(result).toEqual([])
-    })
-    it('should return only visible tokens, sorted by balances', () => {
+describe("sorting", () => {
+  describe("getSortedPortfolioTokens", () => {
+    it("should return an empty array if portfolioTokenBalances is undefined", () => {
+      const result = getSortedPortfolioTokens(undefined, {}, ChainId.MAINNET);
+      expect(result).toEqual([]);
+    });
+    it("should return only visible tokens, sorted by balances", () => {
       const result = getSortedPortfolioTokens(
         tokens,
         {
-          ['ETH']: { usdValue: 1000, balance: 0.5 },
+          ["ETH"]: { usdValue: 1000, balance: 0.5 },
           [DAI.address]: { usdValue: 100, balance: 100 },
           [USDT.address]: { usdValue: 100, balance: 100 },
         },
-        ChainId.MAINNET
-      )
+        ChainId.MAINNET,
+      );
 
-      expect(result).toEqual([nativeOnChain(ChainId.MAINNET), USDT, WBTC])
-    })
-  })
-})
+      expect(result).toEqual([nativeOnChain(ChainId.MAINNET), USDT, WBTC]);
+    });
+  });
+});

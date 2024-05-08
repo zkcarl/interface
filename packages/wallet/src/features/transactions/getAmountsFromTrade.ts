@@ -1,10 +1,10 @@
-import { TradeType } from '@uniswap/sdk-core'
+import { TradeType } from "@novaswap/sdk-core";
 import {
   ConfirmedSwapTransactionInfo,
   ExactInputSwapTransactionInfo,
   ExactOutputSwapTransactionInfo,
   isConfirmedSwapTypeInfo,
-} from 'wallet/src/features/transactions/types'
+} from "wallet/src/features/transactions/types";
 
 export function getAmountsFromTrade(
   typeInfo:
@@ -13,8 +13,8 @@ export function getAmountsFromTrade(
     | ConfirmedSwapTransactionInfo
 ): { inputCurrencyAmountRaw: string; outputCurrencyAmountRaw: string } {
   if (isConfirmedSwapTypeInfo(typeInfo)) {
-    const { inputCurrencyAmountRaw, outputCurrencyAmountRaw } = typeInfo
-    return { inputCurrencyAmountRaw, outputCurrencyAmountRaw }
+    const { inputCurrencyAmountRaw, outputCurrencyAmountRaw } = typeInfo;
+    return { inputCurrencyAmountRaw, outputCurrencyAmountRaw };
   }
 
   return typeInfo.tradeType === TradeType.EXACT_OUTPUT
@@ -25,5 +25,5 @@ export function getAmountsFromTrade(
     : {
         inputCurrencyAmountRaw: typeInfo.inputCurrencyAmountRaw,
         outputCurrencyAmountRaw: typeInfo.expectedOutputCurrencyAmountRaw,
-      }
+      };
 }

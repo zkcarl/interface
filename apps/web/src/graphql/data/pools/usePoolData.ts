@@ -1,63 +1,68 @@
-import { ChainId } from '@uniswap/sdk-core'
-import { V2_BIPS } from 'graphql/data/pools/useTopPools'
-import { chainIdToBackendName } from 'graphql/data/util'
-import ms from 'ms'
-import { useMemo } from 'react'
+import { ChainId } from "@novaswap/sdk-core";
+import { V2_BIPS } from "graphql/data/pools/useTopPools";
+import { chainIdToBackendName } from "graphql/data/util";
+import ms from "ms";
+import { useMemo } from "react";
 import {
   ProtocolVersion,
   Token,
   useV2PairQuery,
   useV3PoolQuery,
-} from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
+} from "uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks";
 
 export interface PoolData {
   // basic pool info
-  address: string
-  feeTier?: number
-  txCount?: number
-  protocolVersion?: ProtocolVersion
+  address: string;
+  feeTier?: number;
+  txCount?: number;
+  protocolVersion?: ProtocolVersion;
 
   // token info
-  token0: Token
-  tvlToken0?: number
-  token0Price?: number
+  token0: Token;
+  tvlToken0?: number;
+  token0Price?: number;
 
-  token1: Token
-  tvlToken1?: number
-  token1Price?: number
+  token1: Token;
+  tvlToken1?: number;
+  token1Price?: number;
 
   // volume
-  volumeUSD24H?: number
-  volumeUSD24HChange?: number
+  volumeUSD24H?: number;
+  volumeUSD24HChange?: number;
 
   // liquidity
-  tvlUSD?: number
-  tvlUSDChange?: number
+  tvlUSD?: number;
+  tvlUSDChange?: number;
 }
 
-type VolumeChange = { value: number; timestamp: number }
+type VolumeChange = { value: number; timestamp: number };
 
 /**
  * Given an array of historical volume, calculate the 24h % change in volume
  */
 function calc24HVolChange(historicalVolume?: (VolumeChange | undefined)[]) {
   if (!historicalVolume) {
-    return undefined
+    return undefined;
   }
-  const currentTime = new Date().getTime()
-  const dayAgo = (currentTime - ms('1d')) / 1000
-  const twoDaysAgo = (currentTime - ms('2d')) / 1000
+  const currentTime = new Date().getTime();
+  const dayAgo = (currentTime - ms("1d")) / 1000;
+  const twoDaysAgo = (currentTime - ms("2d")) / 1000;
 
   const volume24h = historicalVolume
-    .filter((entry): entry is VolumeChange => entry?.timestamp !== undefined && entry.timestamp >= dayAgo)
-    .reduce((acc, cur) => acc + cur.value, 0)
+    .filter(
+      (entry): entry is VolumeChange =>
+        entry?.timestamp !== undefined && entry.timestamp >= dayAgo,
+    )
+    .reduce((acc, cur) => acc + cur.value, 0);
   const volume48h = historicalVolume
     .filter(
       (entry): entry is VolumeChange =>
-        entry?.timestamp !== undefined && entry.timestamp >= twoDaysAgo && entry.timestamp < dayAgo
+        entry?.timestamp !== undefined &&
+        entry.timestamp >= twoDaysAgo &&
+        entry.timestamp < dayAgo,
     )
-    .reduce((acc, cur) => acc + cur.value, 0)
-  return ((volume24h - volume48h) / volume48h) * 100
+    .reduce((acc, cur) => acc + cur.value, 0);
+  return ((volume24h - volume48h) / volume48h) * 100;
 }
 
 /**
@@ -68,11 +73,11 @@ function calc24HVolChange(historicalVolume?: (VolumeChange | undefined)[]) {
  */
 export function usePoolData(
   poolAddress: string,
-  chainId?: ChainId
+  chainId?: ChainId,
 ): {
-  loading: boolean
-  error: boolean
-  data?: PoolData
+  loading: boolean;
+  error: boolean;
+  data?: PoolData;
 } {
   const {
     loading: loadingV3,
@@ -80,8 +85,8 @@ export function usePoolData(
     data: dataV3,
   } = useV3PoolQuery({
     variables: { chain: chainIdToBackendName(chainId), address: poolAddress },
-    errorPolicy: 'all',
-  })
+    errorPolicy: "all",
+  });
   const {
     loading: loadingV2,
     error: errorV2,
@@ -89,15 +94,19 @@ export function usePoolData(
   } = useV2PairQuery({
     variables: { address: poolAddress },
     skip: chainId !== ChainId.MAINNET,
-    errorPolicy: 'all',
-  })
+    errorPolicy: "all",
+  });
 
   return useMemo(() => {
-    const anyError = Boolean(errorV3 || (errorV2 && chainId === ChainId.MAINNET))
-    const anyLoading = Boolean(loadingV3 || (loadingV2 && chainId === ChainId.MAINNET))
+    const anyError = Boolean(
+      errorV3 || (errorV2 && chainId === ChainId.MAINNET),
+    );
+    const anyLoading = Boolean(
+      loadingV3 || (loadingV2 && chainId === ChainId.MAINNET),
+    );
 
-    const pool = dataV3?.v3Pool ?? dataV2?.v2Pair ?? undefined
-    const feeTier = dataV3?.v3Pool?.feeTier ?? V2_BIPS
+    const pool = dataV3?.v3Pool ?? dataV2?.v2Pair ?? undefined;
+    const feeTier = dataV3?.v3Pool?.feeTier ?? V2_BIPS;
 
     return {
       data: pool
@@ -113,13 +122,23 @@ export function usePoolData(
             token1Price: pool.token1?.project?.markets?.[0]?.price?.value,
             feeTier,
             volumeUSD24H: pool.volume24h?.value,
-            volumeUSD24HChange: calc24HVolChange(pool.historicalVolume?.concat()),
+            volumeUSD24HChange: calc24HVolChange(
+              pool.historicalVolume?.concat(),
+            ),
             tvlUSD: pool.totalLiquidity?.value,
             tvlUSDChange: pool.totalLiquidityPercentChange24h?.value,
           }
         : undefined,
       error: anyError,
       loading: anyLoading,
-    }
-  }, [chainId, dataV2?.v2Pair, dataV3?.v3Pool, errorV2, errorV3, loadingV2, loadingV3])
+    };
+  }, [
+    chainId,
+    dataV2?.v2Pair,
+    dataV3?.v3Pool,
+    errorV2,
+    errorV3,
+    loadingV2,
+    loadingV3,
+  ]);
 }

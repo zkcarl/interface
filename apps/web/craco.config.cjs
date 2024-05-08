@@ -136,7 +136,7 @@ module.exports = {
             plugin.allowedPaths.push(path.join(__dirname, '..', '..', 'node_modules/@vanilla-extract/webpack-plugin'))
           }
 
-          return plugin
+          return plugin;
         }),
         // Webpack 5 does not resolve node modules, so we do so for those necessary:
         fallback: {

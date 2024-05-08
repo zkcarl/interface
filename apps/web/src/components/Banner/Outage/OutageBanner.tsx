@@ -1,50 +1,59 @@
-import { ChainId } from '@uniswap/sdk-core'
-import { Container, PopupContainer, StyledXButton, TextContainer } from 'components/Banner/shared/styled'
-import { ChainOutageData } from 'featureFlags/flags/outageBanner'
-import { chainIdToBackendName } from 'graphql/data/util'
-import { Trans } from 'i18n'
-import { useState } from 'react'
-import { Globe } from 'react-feather'
-import styled, { useTheme } from 'styled-components'
-import { ExternalLink, ThemedText } from 'theme/components'
-import { capitalize } from 'tsafe'
+import { ChainId } from "@novaswap/sdk-core";
+import {
+  Container,
+  PopupContainer,
+  StyledXButton,
+  TextContainer,
+} from "components/Banner/shared/styled";
+import { ChainOutageData } from "featureFlags/flags/outageBanner";
+import { chainIdToBackendName } from "graphql/data/util";
+import { Trans } from "i18n";
+import { useState } from "react";
+import { Globe } from "react-feather";
+import styled, { useTheme } from "styled-components";
+import { ExternalLink, ThemedText } from "theme/components";
+import { capitalize } from "tsafe";
 
 const IconContainer = styled.div`
   height: 100%;
   margin: 12px 0 0 12px;
   align-self: flex-start;
-`
+`;
 
 const IconBackground = styled.div`
   display: flex;
   background-color: ${({ theme }) => theme.deprecated_accentWarningSoft};
   padding: 10px;
   border-radius: 12px;
-`
+`;
 
 const StyledPopupContainer = styled(PopupContainer)`
   height: unset;
-`
+`;
 
 const OutageTextContainer = styled(TextContainer)`
   padding: 10px 10px 10px 0;
-`
+`;
 
 const HelpCenterLink = styled(ExternalLink)`
   font-size: 14px;
   margin-top: 4px;
-`
+`;
 
 export function getOutageBannerSessionStorageKey(chainId: ChainId) {
-  return `hideOutageBanner-${chainId}`
+  return `hideOutageBanner-${chainId}`;
 }
 
 export function OutageBanner({ chainId, version }: ChainOutageData) {
-  const [hidden, setHidden] = useState(false)
-  const theme = useTheme()
-  const versionName = version ? version.toString().toLowerCase() + ' data' : 'Data'
-  const chainName = capitalize(chainIdToBackendName(chainId).toLowerCase())
-  const versionDescription = version ? ' ' + version.toString().toLowerCase() : ''
+  const [hidden, setHidden] = useState(false);
+  const theme = useTheme();
+  const versionName = version
+    ? version.toString().toLowerCase() + " data"
+    : "Data";
+  const chainName = capitalize(chainIdToBackendName(chainId).toLowerCase());
+  const versionDescription = version
+    ? " " + version.toString().toLowerCase()
+    : "";
 
   return (
     <StyledPopupContainer show={!hidden}>
@@ -61,11 +70,15 @@ export function OutageBanner({ chainId, version }: ChainOutageData) {
           <ThemedText.LabelMicro>
             <Trans>
               {{ chainName }}
-              {{ versionDescription }} data is unavailable right now, but we expect the issue to be resolved shortly.
+              {{ versionDescription }} data is unavailable right now, but we
+              expect the issue to be resolved shortly.
             </Trans>
           </ThemedText.LabelMicro>
           <ThemedText.LabelMicro>
-            <Trans>You can still swap and provide liquidity on this chain without issue.</Trans>
+            <Trans>
+              You can still swap and provide liquidity on this chain without
+              issue.
+            </Trans>
           </ThemedText.LabelMicro>
           <HelpCenterLink href="https://support.uniswap.org/hc/en-us/articles/23952001935373-Subgraph-downtime">
             <Trans>Learn more</Trans>
@@ -75,11 +88,14 @@ export function OutageBanner({ chainId, version }: ChainOutageData) {
           data-testid="uniswap-outage-banner"
           size={24}
           onClick={() => {
-            setHidden(true)
-            sessionStorage.setItem(getOutageBannerSessionStorageKey(chainId), 'true')
+            setHidden(true);
+            sessionStorage.setItem(
+              getOutageBannerSessionStorageKey(chainId),
+              "true",
+            );
           }}
         />
       </Container>
     </StyledPopupContainer>
-  )
+  );
 }

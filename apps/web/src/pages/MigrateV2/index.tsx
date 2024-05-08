@@ -1,7 +1,7 @@
 import { getCreate2Address } from '@ethersproject/address'
 import { keccak256, pack } from '@ethersproject/solidity'
-import { Token, V2_FACTORY_ADDRESSES } from '@uniswap/sdk-core'
-import { Pair } from '@uniswap/v2-sdk'
+import { Token, V2_FACTORY_ADDRESSES } from "@novaswap/sdk-core";
+import { Pair } from "@novaswap/v2-sdk";
 import { useWeb3React } from '@web3-react/core'
 import MigrateSushiPositionCard from 'components/PositionCard/Sushi'
 import MigrateV2PositionCard from 'components/PositionCard/V2'

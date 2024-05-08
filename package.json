@@ -13,9 +13,11 @@
     "husky": "^8.0.3",
     "i18next": "23.10.0",
     "i18next-parser": "8.6.0",
+    "stats-lite": "2.2.0",
     "syncpack": "^8.5.14",
     "turbo": "1.10.16",
-    "turbo-ignore": "^1.11.3"
+    "turbo-ignore": "^1.11.3",
+    "zksync-web3": "0.17.1"
   },
   "engines": {
     "node": "=18.12.1",
@@ -36,10 +38,10 @@
     "cypress": "12.12.0",
     "@babel/preset-env": "7.23.3",
     "immer": "9.0.21",
-    "@uniswap/v2-sdk": "4.3.0",
+    "@novaswap/v2-sdk": "4.3.0",
     "@apollo/client": "3.9.6",
-    "@uniswap/sdk-core": "4.2.0",
-    "@uniswap/universal-router-sdk": "1.9.0",
+    "@novaswap/sdk-core": "4.2.0",
+    "@novaswap/universal-router-sdk": "1.9.3",
     "@react-navigation/routers": "6.1.9",
     "@react-navigation/core": "6.2.2",
     "@sideway/formula": "3.0.1",
@@ -83,10 +85,6 @@
     "@tamagui/animations-moti@1.92.0": "patch:@tamagui/animations-moti@npm%3A1.92.0#./.yarn/patches/@tamagui-animations-moti-npm-1.92.0-a8dde990ec.patch"
   },
   "scripts": {
-    "postinstall": "patch-package",
-    "postinstall-sdk-core": "npx patch-package @uniswap/sdk-core",
-    "postinstall-universal": "npx patch-package @uniswap/universal-router-sdk",
-    "postinstall-smart-order-router": "npx patch-package @uniswap/smart-order-router",
     "g:build": "turbo run build --concurrency=100%",
     "g:check:deps:usage": " depcheck && turbo run check:deps:usage",
     "g:check:deps:mismatch": "manypkg check",
@@ -130,7 +128,9 @@
     "config/*"
   ],
   "devDependencies": {
+    "@types/stats-lite": "2.2.2",
     "patch-package": "8.0.0",
-    "postinstall-postinstall": "2.1.0"
+    "postinstall-postinstall": "2.1.0",
+    "react-dev-utils": "12.0.1"
   }
 }

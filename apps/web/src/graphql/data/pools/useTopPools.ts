@@ -1,39 +1,45 @@
-import { ChainId, Percent } from '@uniswap/sdk-core'
-import { exploreSearchStringAtom } from 'components/Tokens/state'
-import { BIPS_BASE } from 'constants/misc'
-import { OrderDirection, chainIdToBackendName } from 'graphql/data/util'
-import { useAtomValue } from 'jotai/utils'
-import { useMemo } from 'react'
+import { ChainId, Percent } from "@novaswap/sdk-core";
+import { exploreSearchStringAtom } from "components/Tokens/state";
+import { BIPS_BASE } from "constants/misc";
+import { OrderDirection, chainIdToBackendName } from "graphql/data/util";
+import { useAtomValue } from "jotai/utils";
+import { useMemo } from "react";
 import {
   ProtocolVersion,
   Token,
   useTopV2PairsQuery,
   useTopV3PoolsQuery,
-} from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
+} from "uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks";
 
 export function sortPools(pools: TablePool[], sortState: PoolTableSortState) {
   return pools.sort((a, b) => {
     switch (sortState.sortBy) {
       case PoolSortFields.TxCount:
-        return sortState.sortDirection === OrderDirection.Desc ? b.txCount - a.txCount : a.txCount - b.txCount
+        return sortState.sortDirection === OrderDirection.Desc
+          ? b.txCount - a.txCount
+          : a.txCount - b.txCount;
       case PoolSortFields.Volume24h:
-        return sortState.sortDirection === OrderDirection.Desc ? b.volume24h - a.volume24h : a.volume24h - b.volume24h
+        return sortState.sortDirection === OrderDirection.Desc
+          ? b.volume24h - a.volume24h
+          : a.volume24h - b.volume24h;
       case PoolSortFields.VolumeWeek:
         return sortState.sortDirection === OrderDirection.Desc
           ? b.volumeWeek - a.volumeWeek
-          : a.volumeWeek - b.volumeWeek
+          : a.volumeWeek - b.volumeWeek;
       case PoolSortFields.OneDayApr:
         return sortState.sortDirection === OrderDirection.Desc
           ? b.oneDayApr.greaterThan(a.oneDayApr)
             ? 1
             : -1
           : a.oneDayApr.greaterThan(b.oneDayApr)
-          ? 1
-          : -1
+            ? 1
+            : -1;
       default:
-        return sortState.sortDirection === OrderDirection.Desc ? b.tvl - a.tvl : a.tvl - b.tvl
+        return sortState.sortDirection === OrderDirection.Desc
+          ? b.tvl - a.tvl
+          : a.tvl - b.tvl;
     }
-  })
+  });
 }
 
 /**
@@ -43,54 +49,77 @@ export function sortPools(pools: TablePool[], sortState: PoolTableSortState) {
  * @param feeTier the feeTier of the pool or 300 for a v2 pair
  * @returns 1 day APR expressed as a percent
  */
-export function calculateOneDayApr(volume24h?: number, tvl?: number, feeTier?: number): Percent {
-  if (!volume24h || !feeTier || !tvl || !Math.round(tvl)) return new Percent(0)
-  return new Percent(Math.round(volume24h * (feeTier / BIPS_BASE)), Math.round(tvl))
+export function calculateOneDayApr(
+  volume24h?: number,
+  tvl?: number,
+  feeTier?: number,
+): Percent {
+  if (!volume24h || !feeTier || !tvl || !Math.round(tvl)) return new Percent(0);
+  return new Percent(
+    Math.round(volume24h * (feeTier / BIPS_BASE)),
+    Math.round(tvl),
+  );
 }
 
-export const V2_BIPS = 3000
+export const V2_BIPS = 3000;
 
 export interface TablePool {
-  hash: string
-  token0: Token
-  token1: Token
-  txCount: number
-  tvl: number
-  volume24h: number
-  volumeWeek: number
-  oneDayApr: Percent
-  feeTier: number
-  protocolVersion: ProtocolVersion
+  hash: string;
+  token0: Token;
+  token1: Token;
+  txCount: number;
+  tvl: number;
+  volume24h: number;
+  volumeWeek: number;
+  oneDayApr: Percent;
+  feeTier: number;
+  protocolVersion: ProtocolVersion;
 }
 
 export enum PoolSortFields {
-  TVL = 'TVL',
-  Volume24h = '1 day volume',
-  VolumeWeek = '7 day volume',
-  OneDayApr = '1 day APR',
-  TxCount = 'Transactions',
+  TVL = "TVL",
+  Volume24h = "1 day volume",
+  VolumeWeek = "7 day volume",
+  OneDayApr = "1 day APR",
+  TxCount = "Transactions",
 }
 
 export type PoolTableSortState = {
-  sortBy: PoolSortFields
-  sortDirection: OrderDirection
-}
+  sortBy: PoolSortFields;
+  sortDirection: OrderDirection;
+};
 
 function useFilteredPools(pools: TablePool[]) {
-  const filterString = useAtomValue(exploreSearchStringAtom)
+  const filterString = useAtomValue(exploreSearchStringAtom);
 
-  const lowercaseFilterString = useMemo(() => filterString.toLowerCase(), [filterString])
+  const lowercaseFilterString = useMemo(
+    () => filterString.toLowerCase(),
+    [filterString],
+  );
 
   return useMemo(
     () =>
       pools.filter((pool) => {
-        const addressIncludesFilterString = pool.hash.toLowerCase().includes(lowercaseFilterString)
-        const token0IncludesFilterString = pool.token0?.symbol?.toLowerCase().includes(lowercaseFilterString)
-        const token1IncludesFilterString = pool.token1?.symbol?.toLowerCase().includes(lowercaseFilterString)
-        const token0HashIncludesFilterString = pool.token0?.address?.toLowerCase().includes(lowercaseFilterString)
-        const token1HashIncludesFilterString = pool.token1?.address?.toLowerCase().includes(lowercaseFilterString)
-        const poolName = `${pool.token0?.symbol}/${pool.token1?.symbol}`.toLowerCase()
-        const poolNameIncludesFilterString = poolName.includes(lowercaseFilterString)
+        const addressIncludesFilterString = pool.hash
+          .toLowerCase()
+          .includes(lowercaseFilterString);
+        const token0IncludesFilterString = pool.token0?.symbol
+          ?.toLowerCase()
+          .includes(lowercaseFilterString);
+        const token1IncludesFilterString = pool.token1?.symbol
+          ?.toLowerCase()
+          .includes(lowercaseFilterString);
+        const token0HashIncludesFilterString = pool.token0?.address
+          ?.toLowerCase()
+          .includes(lowercaseFilterString);
+        const token1HashIncludesFilterString = pool.token1?.address
+          ?.toLowerCase()
+          .includes(lowercaseFilterString);
+        const poolName =
+          `${pool.token0?.symbol}/${pool.token1?.symbol}`.toLowerCase();
+        const poolNameIncludesFilterString = poolName.includes(
+          lowercaseFilterString,
+        );
         return (
           token0IncludesFilterString ||
           token1IncludesFilterString ||
@@ -98,10 +127,10 @@ function useFilteredPools(pools: TablePool[]) {
           token0HashIncludesFilterString ||
           token1HashIncludesFilterString ||
           poolNameIncludesFilterString
-        )
+        );
       }),
-    [lowercaseFilterString, pools]
-  )
+    [lowercaseFilterString, pools],
+  );
 }
 
 export function useTopPools(sortState: PoolTableSortState, chainId?: ChainId) {
@@ -111,7 +140,7 @@ export function useTopPools(sortState: PoolTableSortState, chainId?: ChainId) {
     data: dataV3,
   } = useTopV3PoolsQuery({
     variables: { first: 100, chain: chainIdToBackendName(chainId) },
-  })
+  });
   const {
     loading: loadingV2,
     error: errorV2,
@@ -119,8 +148,8 @@ export function useTopPools(sortState: PoolTableSortState, chainId?: ChainId) {
   } = useTopV2PairsQuery({
     variables: { first: 100 },
     skip: chainId !== ChainId.MAINNET,
-  })
-  const loading = loadingV3 || loadingV2
+  });
+  const loading = loadingV3 || loadingV2;
 
   const unfilteredPools = useMemo(() => {
     const topV3Pools: TablePool[] =
@@ -133,11 +162,15 @@ export function useTopPools(sortState: PoolTableSortState, chainId?: ChainId) {
           tvl: pool.totalLiquidity?.value,
           volume24h: pool.volume24h?.value,
           volumeWeek: pool.volumeWeek?.value,
-          oneDayApr: calculateOneDayApr(pool.volume24h?.value, pool.totalLiquidity?.value, pool.feeTier),
+          oneDayApr: calculateOneDayApr(
+            pool.volume24h?.value,
+            pool.totalLiquidity?.value,
+            pool.feeTier,
+          ),
           feeTier: pool.feeTier,
           protocolVersion: pool.protocolVersion,
-        } as TablePool
-      }) ?? []
+        } as TablePool;
+      }) ?? [];
     const topV2Pairs: TablePool[] =
       dataV2?.topV2Pairs?.map((pool) => {
         return {
@@ -148,15 +181,19 @@ export function useTopPools(sortState: PoolTableSortState, chainId?: ChainId) {
           tvl: pool.totalLiquidity?.value,
           volume24h: pool.volume24h?.value,
           volumeWeek: pool.volumeWeek?.value,
-          oneDayApr: calculateOneDayApr(pool.volume24h?.value, pool.totalLiquidity?.value, V2_BIPS),
+          oneDayApr: calculateOneDayApr(
+            pool.volume24h?.value,
+            pool.totalLiquidity?.value,
+            V2_BIPS,
+          ),
           feeTier: V2_BIPS,
           protocolVersion: pool.protocolVersion,
-        } as TablePool
-      }) ?? []
+        } as TablePool;
+      }) ?? [];
 
-    return sortPools([...topV3Pools, ...topV2Pairs], sortState)
-  }, [dataV2?.topV2Pairs, dataV3?.topV3Pools, sortState])
+    return sortPools([...topV3Pools, ...topV2Pairs], sortState);
+  }, [dataV2?.topV2Pairs, dataV3?.topV3Pools, sortState]);
 
-  const filteredPools = useFilteredPools(unfilteredPools).slice(0, 100)
-  return { topPools: filteredPools, loading, errorV3, errorV2 }
+  const filteredPools = useFilteredPools(unfilteredPools).slice(0, 100);
+  return { topPools: filteredPools, loading, errorV3, errorV2 };
 }

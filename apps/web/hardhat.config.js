@@ -1,14 +1,14 @@
-import { ChainId } from '@uniswap/sdk-core'
-import { UNIVERSAL_ROUTER_CREATION_BLOCK } from '@uniswap/universal-router-sdk'
+import { ChainId } from "@novaswap/sdk-core";
+import { UNIVERSAL_ROUTER_CREATION_BLOCK } from "@novaswap/universal-router-sdk";
 
 /* eslint-env node */
-require('dotenv').config()
+require("dotenv").config();
 
 const forkingConfig = {
   httpHeaders: {
-    Origin: 'localhost:3000', // infura allowlists requests by origin
+    Origin: "localhost:3000", // infura allowlists requests by origin
   },
-}
+};
 
 const forks = {
   [ChainId.MAINNET]: {
@@ -20,7 +20,7 @@ const forks = {
     blockNumber: UNIVERSAL_ROUTER_CREATION_BLOCK(ChainId.POLYGON),
     ...forkingConfig,
   },
-}
+};
 
 module.exports = {
   forks,
@@ -37,4 +37,4 @@ module.exports = {
       },
     },
   },
-}
+};

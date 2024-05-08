@@ -1,21 +1,31 @@
-import { ChainId } from '@uniswap/sdk-core'
-import { SupportedInterfaceChain } from 'constants/chains'
+import { ChainId } from "@novaswap/sdk-core";
+import { SupportedInterfaceChain } from "constants/chains";
 
-const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
-if (typeof INFURA_KEY === 'undefined') {
-  throw new Error(`REACT_APP_INFURA_KEY must be a defined environment variable`)
+const INFURA_KEY = process.env.REACT_APP_INFURA_KEY;
+if (typeof INFURA_KEY === "undefined") {
+  throw new Error(
+    `REACT_APP_INFURA_KEY must be a defined environment variable`,
+  );
 }
-const QUICKNODE_MAINNET_RPC_URL = process.env.REACT_APP_QUICKNODE_MAINNET_RPC_URL
-if (typeof QUICKNODE_MAINNET_RPC_URL === 'undefined') {
-  throw new Error(`REACT_APP_QUICKNODE_MAINNET_RPC_URL must be a defined environment variable`)
+const QUICKNODE_MAINNET_RPC_URL =
+  process.env.REACT_APP_QUICKNODE_MAINNET_RPC_URL;
+if (typeof QUICKNODE_MAINNET_RPC_URL === "undefined") {
+  throw new Error(
+    `REACT_APP_QUICKNODE_MAINNET_RPC_URL must be a defined environment variable`,
+  );
 }
-const QUICKNODE_ARBITRUM_RPC_URL = process.env.REACT_APP_QUICKNODE_ARBITRUM_RPC_URL
-if (typeof QUICKNODE_ARBITRUM_RPC_URL === 'undefined') {
-  throw new Error(`REACT_APP_QUICKNODE_ARBITRUM_RPC_URL must be a defined environment variable`)
+const QUICKNODE_ARBITRUM_RPC_URL =
+  process.env.REACT_APP_QUICKNODE_ARBITRUM_RPC_URL;
+if (typeof QUICKNODE_ARBITRUM_RPC_URL === "undefined") {
+  throw new Error(
+    `REACT_APP_QUICKNODE_ARBITRUM_RPC_URL must be a defined environment variable`,
+  );
 }
-const QUICKNODE_BNB_RPC_URL = process.env.REACT_APP_BNB_RPC_URL
-if (typeof QUICKNODE_BNB_RPC_URL === 'undefined') {
-  throw new Error(`REACT_APP_BNB_RPC_URL must be a defined environment variable`)
+const QUICKNODE_BNB_RPC_URL = process.env.REACT_APP_BNB_RPC_URL;
+if (typeof QUICKNODE_BNB_RPC_URL === "undefined") {
+  throw new Error(
+    `REACT_APP_BNB_RPC_URL must be a defined environment variable`,
+  );
 }
 
 /**
@@ -176,13 +186,13 @@ export const INFURA_PREFIX_TO_CHAIN_ID: { [prefix: string]: ChainId } = {
   mainnet: ChainId.MAINNET,
   goerli: ChainId.GOERLI,
   sepolia: ChainId.SEPOLIA,
-  'nova-sepolia': ChainId.NOVA_SEPOLIA,
-  'optimism-mainnet': ChainId.OPTIMISM,
-  'optimism-goerli': ChainId.OPTIMISM_GOERLI,
-  'arbitrum-mainnet': ChainId.ARBITRUM_ONE,
-  'arbitrum-goerli': ChainId.ARBITRUM_GOERLI,
-  'polygon-mainnet': ChainId.POLYGON,
-  'polygon-mumbai': ChainId.POLYGON_MUMBAI,
-  'avalanche-mainnet': ChainId.AVALANCHE,
-  'base-mainnet': ChainId.BASE,
-}
+  "nova-sepolia": ChainId.NOVA_SEPOLIA,
+  "optimism-mainnet": ChainId.OPTIMISM,
+  "optimism-goerli": ChainId.OPTIMISM_GOERLI,
+  "arbitrum-mainnet": ChainId.ARBITRUM_ONE,
+  "arbitrum-goerli": ChainId.ARBITRUM_GOERLI,
+  "polygon-mainnet": ChainId.POLYGON,
+  "polygon-mumbai": ChainId.POLYGON_MUMBAI,
+  "avalanche-mainnet": ChainId.AVALANCHE,
+  "base-mainnet": ChainId.BASE,
+};

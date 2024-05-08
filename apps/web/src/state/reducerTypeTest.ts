@@ -1,33 +1,42 @@
-import { ChainId } from '@uniswap/sdk-core'
-import { TokenList } from '@uniswap/token-lists'
-import { RecentConnectionMeta } from 'connection/types'
-import { SupportedLocale } from 'constants/locales'
-import multicall from 'lib/state/multicall'
-import { CombinedState } from 'redux'
-import { assert, Equals } from 'tsafe'
+import { ChainId } from "@novaswap/sdk-core";
+import { TokenList } from "@uniswap/token-lists";
+import { RecentConnectionMeta } from "connection/types";
+import { SupportedLocale } from "constants/locales";
+import multicall from "lib/state/multicall";
+import { CombinedState } from "redux";
+import { assert, Equals } from "tsafe";
 
-import { ApplicationModal, ApplicationState, PopupList, PopupType } from './application/reducer'
-import { Field as BurnField } from './burn/actions'
-import { BurnState } from './burn/reducer'
-import { BurnV3State } from './burn/v3/reducer'
-import { ListsState } from './lists/types'
-import { LogsState } from './logs/slice'
-import { Log } from './logs/utils'
-import { Field } from './mint/actions'
-import { MintState } from './mint/reducer'
-import { Field as FieldV3 } from './mint/v3/actions'
-import { FullRange, MintState as MintV3State } from './mint/v3/reducer'
-import { AppState } from './reducer'
-import { quickRouteApi } from './routing/quickRouteSlice'
-import { routingApi } from './routing/slice'
-import { RouterPreference } from './routing/types'
-import { SignatureState } from './signatures/reducer'
-import { TransactionState } from './transactions/reducer'
-import { TransactionDetails } from './transactions/types'
-import { UserState } from './user/reducer'
-import { SerializedPair, SerializedToken, SlippageTolerance } from './user/types'
-import { WalletState } from './wallets/reducer'
-import { Wallet } from './wallets/types'
+import {
+  ApplicationModal,
+  ApplicationState,
+  PopupList,
+  PopupType,
+} from "./application/reducer";
+import { Field as BurnField } from "./burn/actions";
+import { BurnState } from "./burn/reducer";
+import { BurnV3State } from "./burn/v3/reducer";
+import { ListsState } from "./lists/types";
+import { LogsState } from "./logs/slice";
+import { Log } from "./logs/utils";
+import { Field } from "./mint/actions";
+import { MintState } from "./mint/reducer";
+import { Field as FieldV3 } from "./mint/v3/actions";
+import { FullRange, MintState as MintV3State } from "./mint/v3/reducer";
+import { AppState } from "./reducer";
+import { quickRouteApi } from "./routing/quickRouteSlice";
+import { routingApi } from "./routing/slice";
+import { RouterPreference } from "./routing/types";
+import { SignatureState } from "./signatures/reducer";
+import { TransactionState } from "./transactions/reducer";
+import { TransactionDetails } from "./transactions/types";
+import { UserState } from "./user/reducer";
+import {
+  SerializedPair,
+  SerializedToken,
+  SlippageTolerance,
+} from "./user/types";
+import { WalletState } from "./wallets/reducer";
+import { Wallet } from "./wallets/types";
 
 /**
  * WARNING:
@@ -49,141 +58,141 @@ import { Wallet } from './wallets/types'
  */
 
 type ExpectedAppState = CombinedState<{
-  user: UserState
-  transactions: TransactionState
-  signatures: SignatureState
-  lists: ListsState
-  application: ApplicationState
-  wallets: WalletState
-  mint: MintState
-  mintV3: MintV3State
-  burn: BurnState
-  burnV3: BurnV3State
-  multicall: ReturnType<typeof multicall.reducer>
-  logs: LogsState
-  [routingApi.reducerPath]: ReturnType<typeof routingApi.reducer>
-  [quickRouteApi.reducerPath]: ReturnType<typeof quickRouteApi.reducer>
-}>
+  user: UserState;
+  transactions: TransactionState;
+  signatures: SignatureState;
+  lists: ListsState;
+  application: ApplicationState;
+  wallets: WalletState;
+  mint: MintState;
+  mintV3: MintV3State;
+  burn: BurnState;
+  burnV3: BurnV3State;
+  multicall: ReturnType<typeof multicall.reducer>;
+  logs: LogsState;
+  [routingApi.reducerPath]: ReturnType<typeof routingApi.reducer>;
+  [quickRouteApi.reducerPath]: ReturnType<typeof quickRouteApi.reducer>;
+}>;
 
-assert<Equals<AppState, ExpectedAppState>>()
+assert<Equals<AppState, ExpectedAppState>>();
 
 interface ExpectedUserState {
-  recentConnectionMeta?: RecentConnectionMeta
-  lastUpdateVersionTimestamp?: number
-  userLocale: SupportedLocale | null
-  userRouterPreference: RouterPreference
-  userHideClosedPositions: boolean
-  userSlippageTolerance: number | SlippageTolerance.Auto
-  userSlippageToleranceHasBeenMigratedToAuto: boolean
-  userDeadline: number
+  recentConnectionMeta?: RecentConnectionMeta;
+  lastUpdateVersionTimestamp?: number;
+  userLocale: SupportedLocale | null;
+  userRouterPreference: RouterPreference;
+  userHideClosedPositions: boolean;
+  userSlippageTolerance: number | SlippageTolerance.Auto;
+  userSlippageToleranceHasBeenMigratedToAuto: boolean;
+  userDeadline: number;
   tokens: {
     [chainId: number]: {
-      [address: string]: SerializedToken
-    }
-  }
+      [address: string]: SerializedToken;
+    };
+  };
   pairs: {
     [chainId: number]: {
-      [key: string]: SerializedPair
-    }
-  }
-  timestamp: number
-  showSurveyPopup?: boolean
-  originCountry?: string
+      [key: string]: SerializedPair;
+    };
+  };
+  timestamp: number;
+  showSurveyPopup?: boolean;
+  originCountry?: string;
 }
 
-assert<Equals<UserState, ExpectedUserState>>()
+assert<Equals<UserState, ExpectedUserState>>();
 
 interface ExpectedTransactionState {
   [chainId: number]: {
-    [txHash: string]: TransactionDetails
-  }
+    [txHash: string]: TransactionDetails;
+  };
 }
 
-assert<Equals<TransactionState, ExpectedTransactionState>>()
+assert<Equals<TransactionState, ExpectedTransactionState>>();
 
 interface ExpectedListsState {
   readonly byUrl: {
     readonly [url: string]: {
-      readonly current: TokenList | null
-      readonly pendingUpdate: TokenList | null
-      readonly loadingRequestId: string | null
-      readonly error: string | null
-    }
-  }
-  readonly lastInitializedDefaultListOfLists?: string[]
+      readonly current: TokenList | null;
+      readonly pendingUpdate: TokenList | null;
+      readonly loadingRequestId: string | null;
+      readonly error: string | null;
+    };
+  };
+  readonly lastInitializedDefaultListOfLists?: string[];
 }
 
-assert<Equals<ListsState, ExpectedListsState>>()
+assert<Equals<ListsState, ExpectedListsState>>();
 
 interface ExpectedApplicationState {
-  readonly chainId: number | null
-  readonly fiatOnramp: { available: boolean; availabilityChecked: boolean }
-  readonly openModal: ApplicationModal | null
-  readonly popupList: PopupList
-  readonly suppressedPopups: PopupType[]
+  readonly chainId: number | null;
+  readonly fiatOnramp: { available: boolean; availabilityChecked: boolean };
+  readonly openModal: ApplicationModal | null;
+  readonly popupList: PopupList;
+  readonly suppressedPopups: PopupType[];
 }
 
-assert<Equals<ApplicationState, ExpectedApplicationState>>()
+assert<Equals<ApplicationState, ExpectedApplicationState>>();
 
 interface ExpectedWalletState {
-  connectedWallets: Wallet[]
-  switchingChain: ChainId | false
+  connectedWallets: Wallet[];
+  switchingChain: ChainId | false;
 }
 
-assert<Equals<WalletState, ExpectedWalletState>>()
+assert<Equals<WalletState, ExpectedWalletState>>();
 
 interface ExpectedMintState {
-  readonly independentField: Field
-  readonly typedValue: string
-  readonly otherTypedValue: string
-  readonly startPriceTypedValue: string
-  readonly leftRangeTypedValue: string
-  readonly rightRangeTypedValue: string
+  readonly independentField: Field;
+  readonly typedValue: string;
+  readonly otherTypedValue: string;
+  readonly startPriceTypedValue: string;
+  readonly leftRangeTypedValue: string;
+  readonly rightRangeTypedValue: string;
 }
 
-assert<Equals<MintState, ExpectedMintState>>()
+assert<Equals<MintState, ExpectedMintState>>();
 
 interface ExpectedMintV3State {
-  readonly independentField: FieldV3
-  readonly typedValue: string
-  readonly startPriceTypedValue: string
-  readonly leftRangeTypedValue: string | FullRange
-  readonly rightRangeTypedValue: string | FullRange
+  readonly independentField: FieldV3;
+  readonly typedValue: string;
+  readonly startPriceTypedValue: string;
+  readonly leftRangeTypedValue: string | FullRange;
+  readonly rightRangeTypedValue: string | FullRange;
 }
 
-assert<Equals<MintV3State, ExpectedMintV3State>>()
+assert<Equals<MintV3State, ExpectedMintV3State>>();
 
 interface ExpectedBurnState {
-  readonly independentField: BurnField
-  readonly typedValue: string
+  readonly independentField: BurnField;
+  readonly typedValue: string;
 }
 
-assert<Equals<BurnState, ExpectedBurnState>>()
+assert<Equals<BurnState, ExpectedBurnState>>();
 
 interface ExpectedBurnV3State {
-  readonly percent: number
+  readonly percent: number;
 }
 
-assert<Equals<BurnV3State, ExpectedBurnV3State>>()
+assert<Equals<BurnV3State, ExpectedBurnV3State>>();
 
 interface ExpectedLogsState {
   [chainId: number]: {
     [filterKey: string]: {
-      listeners: number
-      fetchingBlockNumber?: number
+      listeners: number;
+      fetchingBlockNumber?: number;
       results?:
         | {
-            blockNumber: number
-            logs: Log[]
-            error?: undefined
+            blockNumber: number;
+            logs: Log[];
+            error?: undefined;
           }
         | {
-            blockNumber: number
-            logs?: undefined
-            error: true
-          }
-    }
-  }
+            blockNumber: number;
+            logs?: undefined;
+            error: true;
+          };
+    };
+  };
 }
 
-assert<Equals<LogsState, ExpectedLogsState>>()
+assert<Equals<LogsState, ExpectedLogsState>>();

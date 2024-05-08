@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Protocol } from '@uniswap/router-sdk'
-import { sendAnalyticsEvent } from 'analytics'
-import { isUniswapXSupportedChain } from 'constants/chains'
-import ms from 'ms'
-import { logSwapQuoteRequest } from 'tracing/swapFlowLoggers'
-import { trace } from 'tracing/trace'
+import { Protocol } from "@novaswap/router-sdk";
+import { sendAnalyticsEvent } from "analytics";
+import { asSupportedChain, isUniswapXSupportedChain } from "constants/chains";
+import ms from "ms";
+import { logSwapQuoteRequest } from "tracing/swapFlowLoggers";
+import { trace } from "tracing/trace";
 
 import {
   GetQuoteArgs,
@@ -17,29 +17,57 @@ import {
   TradeResult,
   URAQuoteResponse,
   URAQuoteType,
-} from './types'
-import { isExactInput, transformQuoteToTrade } from './utils'
+} from "./types";
+import { isExactInput, transformQuoteToTrade } from "./utils";
+import { ChainId } from "@novaswap/sdk-core";
+import { RPC_PROVIDERS } from "constants/providers";
+import { UniswapMulticallProvider } from "providers/multicall-uniswap-provider";
 
-const UNISWAP_GATEWAY_DNS_URL = process.env.REACT_APP_UNISWAP_GATEWAY_DNS
+const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
+  ChainId.MAINNET,
+  ChainId.OPTIMISM,
+  ChainId.OPTIMISM_GOERLI,
+  ChainId.ARBITRUM_ONE,
+  ChainId.ARBITRUM_GOERLI,
+  ChainId.POLYGON,
+  ChainId.POLYGON_MUMBAI,
+  ChainId.GOERLI,
+  ChainId.SEPOLIA,
+  ChainId.NOVA_SEPOLIA,
+  ChainId.CELO_ALFAJORES,
+  ChainId.CELO,
+  ChainId.BNB,
+  ChainId.AVALANCHE,
+  ChainId.BASE,
+];
+
+const UNISWAP_GATEWAY_DNS_URL = process.env.REACT_APP_UNISWAP_GATEWAY_DNS;
 if (UNISWAP_GATEWAY_DNS_URL === undefined) {
-  throw new Error(`UNISWAP_GATEWAY_DNS_URL must be defined environment variables`)
+  throw new Error(
+    `UNISWAP_GATEWAY_DNS_URL must be defined environment variables`,
+  );
 }
 
 const CLIENT_PARAMS = {
-  protocols: [Protocol.V2, Protocol.V3, Protocol.MIXED],
-}
+  protocols: [Protocol.V3, Protocol.MIXED],
+};
 
-const protocols: Protocol[] = [Protocol.V2, Protocol.V3, Protocol.MIXED]
+const protocols: Protocol[] = [Protocol.V3, Protocol.MIXED];
 
 // routing API quote query params: https://github.com/Uniswap/routing-api/blob/main/lib/handlers/quote/schema/quote-schema.ts
 const DEFAULT_QUERY_PARAMS = {
   protocols,
   // this should be removed once BE fixes issue where enableUniversalRouter is required for fees to work
   enableUniversalRouter: true,
-}
+};
 
 function getRoutingAPIConfig(args: GetQuoteArgs): RoutingConfig {
-  const { account, tokenInChainId, uniswapXForceSyntheticQuotes, routerPreference } = args
+  const {
+    account,
+    tokenInChainId,
+    uniswapXForceSyntheticQuotes,
+    routerPreference,
+  } = args;
 
   const uniswapx = {
     useSyntheticQuotes: uniswapXForceSyntheticQuotes,
@@ -48,14 +76,14 @@ function getRoutingAPIConfig(args: GetQuoteArgs): RoutingConfig {
     recipient: account,
     swapper: account,
     routingType: URAQuoteType.DUTCH_LIMIT,
-  }
+  };
 
   const classic = {
     ...DEFAULT_QUERY_PARAMS,
     routingType: URAQuoteType.CLASSIC,
     recipient: account,
     enableFeeOnTransferFeeFetching: true,
-  }
+  };
 
   if (
     // If the user has opted out of UniswapX during the opt-out transition period, we should respect that preference and only request classic quotes.
@@ -63,171 +91,177 @@ function getRoutingAPIConfig(args: GetQuoteArgs): RoutingConfig {
     routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ||
     !isUniswapXSupportedChain(tokenInChainId)
   ) {
-    return [classic]
+    return [classic];
   }
 
-  return [uniswapx, classic]
+  return [uniswapx, classic];
 }
 
 export const routingApi = createApi({
-  reducerPath: 'routingApi',
+  reducerPath: "routingApi",
   baseQuery: fetchBaseQuery(),
   endpoints: (build) => ({
     getQuote: build.query<TradeResult, GetQuoteArgs>({
       queryFn(args, _api, _extraOptions, fetch) {
-        return trace({ name: 'Quote', op: 'quote', data: { ...args } }, async (trace) => {
-          logSwapQuoteRequest(
-            args.tokenInChainId,
-            args.routerPreference,
-            false
-          );
-          const {
-            tokenInAddress: tokenIn,
-            tokenInChainId,
-            tokenOutAddress: tokenOut,
-            tokenOutChainId,
-            amount,
-            tradeType,
-            sendPortionEnabled,
-          } = args;
-
-          const requestBody = {
-            tokenInChainId,
-            tokenIn,
-            tokenOutChainId,
-            tokenOut,
-            amount,
-            sendPortionEnabled,
-            type: isExactInput(tradeType) ? "EXACT_INPUT" : "EXACT_OUTPUT",
-            intent:
-              args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE
-                ? QuoteIntent.Pricing
-                : QuoteIntent.Quote,
-            configs: getRoutingAPIConfig(args),
-          };
-
-          // const requestBody = {
-          //   tokenInChainId,
-          //   tokenInAddress:tokenIn,
-          //   tokenOutChainId,
-          //   tokenOutAddress:tokenOut,
-          //   amount,
-          //   type:'exactIn',
-          //   // sendPortionEnabled,
-          //   // type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
-          //   // intent:
-          //   //   args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
-          //   // configs: getRoutingAPIConfig(args),
-          //   algorithm:'legacy'
-          // }
-
-          // const requestBody = {
-          //   tokenInChainId:1,
-          //   tokenInAddress:'0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-          //   tokenOutChainId:1,
-          //   tokenOutAddress:'0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
-          //   amount:'100',
-          //   type:'exactIn',
-          //   // sendPortionEnabled,
-          //   // type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
-          //   // intent:
-          //   //   args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
-          //   // configs: getRoutingAPIConfig(args),
-          // }
-
-          // try {
-          //   return trace.child({ name: 'Quote on server', op: 'quote.server' }, async () => {
-          //     const response = await fetch({
-          //       method: 'GET',
-          //       //https://g4lamnqiad.execute-api.us-east-1.amazonaws.com/prod/
-          //       // url: `${UNISWAP_GATEWAY_DNS_URL}/quote`,
-          //       url: `https://g4lamnqiad.execute-api.us-east-1.amazonaws.com/prod/quote`,
-          //       params: requestBody,
-          //       headers: {
-          //         // 'x-request-source': 'uniswap-web',
-          //       },
-          //     })
-          //     if (response.error) {
-          //       try {
-          //         // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
-          //         const errorData = response.error.data as { errorCode?: string; detail?: string }
-          //         // NO_ROUTE should be treated as a valid response to prevent retries.
-          //         if (
-          //           typeof errorData === 'object' &&
-          //           (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
-          //         ) {
-          //           sendAnalyticsEvent('No quote received from routing API', {
-          //             requestBody,
-          //             response,
-          //             routerPreference: args.routerPreference,
-          //           })
-          //           return {
-          //             data: { state: QuoteState.NOT_FOUND, latencyMs: trace.now() },
-          //           }
-          //         }
-          //       } catch {
-          //         throw response.error
-          //       }
-          //     }
-          //     console.log('quote response====>',response)
-          //     const responseQuote = {
-          //       routing: 'CLASSIC',
-          //       quote: response.data,
-          //       allQuotes: [],
-          //     }
-          //     // const uraQuoteResponse = response.data as URAQuoteResponse
-          //     const uraQuoteResponse = responseQuote  as URAQuoteResponse;
-          //     const tradeResult = await transformQuoteToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
-
-          //     return { data: { ...tradeResult, latencyMs: trace.now() } }
-          //   })
-          // } catch (error: any) {
-          //   console.warn(
-          //     `GetQuote failed on Unified Routing API, falling back to client: ${
-          //       error?.message ?? error?.detail ?? error
-          //     }`
-          //   )
-          // }
-
-          try {
-            return trace.child(
-              { name: "Quote on client", op: "quote.client" },
-              async () => {
-                const { getRouter, getClientSideQuote } = await import(
-                  "lib/hooks/routing/clientSideSmartOrderRouter"
-                );
-                console.log(args, "args", "shit");
-                const router = getRouter(args.tokenInChainId);
-                const quoteResult = await getClientSideQuote(
-                  args,
-                  router,
-                  CLIENT_PARAMS
-                );
-                if (quoteResult.state === QuoteState.SUCCESS) {
-                  const trade = await transformQuoteToTrade(
-                    args,
-                    quoteResult.data,
-                    QuoteMethod.CLIENT_SIDE_FALLBACK
-                  );
-                  return {
-                    data: { ...trade, latencyMs: trace.now() },
-                  };
-                } else {
-                  return { data: { ...quoteResult, latencyMs: trace.now() } };
-                }
-              }
+        return trace(
+          { name: "Quote", op: "quote", data: { ...args } },
+          async (trace) => {
+            logSwapQuoteRequest(
+              args.tokenInChainId,
+              args.routerPreference,
+              false,
             );
-          } catch (error: any) {
-            console.warn(`GetQuote failed on client: ${error}`);
-            trace.setError(error);
-            return {
-              error: {
-                status: "CUSTOM_ERROR",
-                error: error?.detail ?? error?.message ?? error,
-              },
+            const {
+              tokenInAddress: tokenIn,
+              tokenInChainId,
+              tokenOutAddress: tokenOut,
+              tokenOutChainId,
+              amount,
+              tradeType,
+              sendPortionEnabled,
+            } = args;
+
+            const requestBody = {
+              tokenInChainId,
+              tokenIn,
+              tokenOutChainId,
+              tokenOut,
+              amount,
+              sendPortionEnabled,
+              type: isExactInput(tradeType) ? "EXACT_INPUT" : "EXACT_OUTPUT",
+              intent:
+                args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE
+                  ? QuoteIntent.Pricing
+                  : QuoteIntent.Quote,
+              configs: getRoutingAPIConfig(args),
             };
-          }
-        })
+
+            console.log(requestBody, args, "requestBody");
+
+            // const requestBody = {
+            //   tokenInChainId,
+            //   tokenInAddress:tokenIn,
+            //   tokenOutChainId,
+            //   tokenOutAddress:tokenOut,
+            //   amount,
+            //   type:'exactIn',
+            //   // sendPortionEnabled,
+            //   // type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
+            //   // intent:
+            //   //   args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
+            //   // configs: getRoutingAPIConfig(args),
+            //   algorithm:'legacy'
+            // }
+
+            // const requestBody = {
+            //   tokenInChainId:1,
+            //   tokenInAddress:'0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+            //   tokenOutChainId:1,
+            //   tokenOutAddress:'0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
+            //   amount:'100',
+            //   type:'exactIn',
+            //   // sendPortionEnabled,
+            //   // type: isExactInput(tradeType) ? 'EXACT_INPUT' : 'EXACT_OUTPUT',
+            //   // intent:
+            //   //   args.routerPreference === INTERNAL_ROUTER_PREFERENCE_PRICE ? QuoteIntent.Pricing : QuoteIntent.Quote,
+            //   // configs: getRoutingAPIConfig(args),
+            // }
+
+            // try {
+            //   return trace.child({ name: 'Quote on server', op: 'quote.server' }, async () => {
+            //     const response = await fetch({
+            //       method: 'GET',
+            //       //https://g4lamnqiad.execute-api.us-east-1.amazonaws.com/prod/
+            //       // url: `${UNISWAP_GATEWAY_DNS_URL}/quote`,
+            //       url: `https://g4lamnqiad.execute-api.us-east-1.amazonaws.com/prod/quote`,
+            //       params: requestBody,
+            //       headers: {
+            //         // 'x-request-source': 'uniswap-web',
+            //       },
+            //     })
+            //     if (response.error) {
+            //       try {
+            //         // cast as any here because we do a runtime check on it being an object before indexing into .errorCode
+            //         const errorData = response.error.data as { errorCode?: string; detail?: string }
+            //         // NO_ROUTE should be treated as a valid response to prevent retries.
+            //         if (
+            //           typeof errorData === 'object' &&
+            //           (errorData?.errorCode === 'NO_ROUTE' || errorData?.detail === 'No quotes available')
+            //         ) {
+            //           sendAnalyticsEvent('No quote received from routing API', {
+            //             requestBody,
+            //             response,
+            //             routerPreference: args.routerPreference,
+            //           })
+            //           return {
+            //             data: { state: QuoteState.NOT_FOUND, latencyMs: trace.now() },
+            //           }
+            //         }
+            //       } catch {
+            //         throw response.error
+            //       }
+            //     }
+            //     console.log('quote response====>',response)
+            //     const responseQuote = {
+            //       routing: 'CLASSIC',
+            //       quote: response.data,
+            //       allQuotes: [],
+            //     }
+            //     // const uraQuoteResponse = response.data as URAQuoteResponse
+            //     const uraQuoteResponse = responseQuote  as URAQuoteResponse;
+            //     const tradeResult = await transformQuoteToTrade(args, uraQuoteResponse, QuoteMethod.ROUTING_API)
+
+            //     return { data: { ...tradeResult, latencyMs: trace.now() } }
+            //   })
+            // } catch (error: any) {
+            //   console.warn(
+            //     `GetQuote failed on Unified Routing API, falling back to client: ${
+            //       error?.message ?? error?.detail ?? error
+            //     }`
+            //   )
+            // }
+
+            try {
+              return trace.child(
+                { name: "Quote on client", op: "quote.client" },
+                async () => {
+                  const { getClientSideQuote, getRouter } = await import(
+                    "lib/hooks/routing/clientSideSmartOrderRouter"
+                  );
+                  const router = await getRouter(args.tokenInChainId);
+                  console.log("router====>", router);
+                  const quoteResult = await getClientSideQuote(
+                    args,
+                    router,
+                    CLIENT_PARAMS,
+                  );
+                  console.log("quoteResult====>", quoteResult);
+                  if (quoteResult.state === QuoteState.SUCCESS) {
+                    const trade = await transformQuoteToTrade(
+                      args,
+                      quoteResult.data,
+                      QuoteMethod.CLIENT_SIDE_FALLBACK,
+                    );
+                    return {
+                      data: { ...trade, latencyMs: trace.now() },
+                    };
+                  } else {
+                    return { data: { ...quoteResult, latencyMs: trace.now() } };
+                  }
+                },
+              );
+            } catch (error: any) {
+              console.warn(`GetQuote failed on client: ${error}`);
+              trace.setError(error);
+              return {
+                error: {
+                  status: "CUSTOM_ERROR",
+                  error: error?.detail ?? error?.message ?? error,
+                },
+              };
+            }
+          },
+        );
       },
       keepUnusedDataFor: ms(`10s`),
       extraOptions: {
@@ -235,7 +269,7 @@ export const routingApi = createApi({
       },
     }),
   }),
-})
+});
 
 export const { useGetQuoteQuery } = routingApi
 export const useGetQuoteQueryState = routingApi.endpoints.getQuote.useQueryState

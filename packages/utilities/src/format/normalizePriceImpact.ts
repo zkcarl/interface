@@ -1,5 +1,5 @@
-import { Percent } from '@uniswap/sdk-core'
+import { Percent } from "@novaswap/sdk-core";
 
 export function normalizePriceImpact(priceImpact: Percent): number {
-  return Number(priceImpact.multiply(-1).toFixed(3))
+  return Number(priceImpact.multiply(-1).toFixed(3));
 }

@@ -1,18 +1,18 @@
-import { Currency } from '@uniswap/sdk-core'
-import { t } from 'i18n'
+import { Currency } from "@novaswap/sdk-core";
+import { t } from "i18n";
 
 export const getTokenPageTitle = (currency?: Currency) => {
-  const tokenName = currency?.name
-  const tokenSymbol = currency?.symbol
-  const baseTitle = t`Buy, sell, and trade on Uniswap`
+  const tokenName = currency?.name;
+  const tokenSymbol = currency?.symbol;
+  const baseTitle = t`Buy, sell, and trade on Uniswap`;
   if (!tokenName && !tokenSymbol) {
-    return baseTitle
+    return baseTitle;
   }
   if (!tokenName && tokenSymbol) {
-    return `${tokenSymbol}: ${baseTitle}`
+    return `${tokenSymbol}: ${baseTitle}`;
   }
   if (tokenName && !tokenSymbol) {
-    return `${tokenName}: ${baseTitle}`
+    return `${tokenName}: ${baseTitle}`;
   }
-  return `${tokenName} (${tokenSymbol}): ${baseTitle}`
-}
+  return `${tokenName} (${tokenSymbol}): ${baseTitle}`;
+};

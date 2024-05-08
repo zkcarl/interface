@@ -1,14 +1,20 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { MixedRouteSDK } from '@uniswap/router-sdk'
-import { Currency, CurrencyAmount, Percent, Token, TradeType } from '@uniswap/sdk-core'
-import { DutchOrderInfo, DutchOrderInfoJSON } from '@uniswap/uniswapx-sdk'
-import { Pair, Route as V2Route } from '@uniswap/v2-sdk'
-import { FeeAmount, Pool, Route as V3Route } from '@uniswap/v3-sdk'
-import { BIPS_BASE } from 'constants/misc'
-import { isAvalanche, isBsc, isPolygon, nativeOnChain } from 'constants/tokens'
-import { toSlippagePercent } from 'utils/slippage'
+import { MixedRouteSDK } from "@novaswap/router-sdk";
+import {
+  Currency,
+  CurrencyAmount,
+  Percent,
+  Token,
+  TradeType,
+} from "@novaswap/sdk-core";
+import { DutchOrderInfo, DutchOrderInfoJSON } from "@uniswap/uniswapx-sdk";
+import { Pair, Route as V2Route } from "@novaswap/v2-sdk";
+import { FeeAmount, Pool, Route as V3Route } from "@novaswap/v3-sdk";
+import { BIPS_BASE } from "constants/misc";
+import { isAvalanche, isBsc, isPolygon, nativeOnChain } from "constants/tokens";
+import { toSlippagePercent } from "utils/slippage";
 
-import { getApproveInfo, getWrapInfo } from './gas'
+import { getApproveInfo, getWrapInfo } from "./gas";
 import {
   ClassicQuoteData,
   ClassicTrade,
@@ -36,68 +42,92 @@ import {
   V2PoolInRoute,
   V3PoolInRoute,
   isClassicQuoteResponse,
-} from './types'
+} from "./types";
 
 interface RouteResult {
-  routev3: V3Route<Currency, Currency> | null
-  routev2: V2Route<Currency, Currency> | null
-  mixedRoute: MixedRouteSDK<Currency, Currency> | null
-  inputAmount: CurrencyAmount<Currency>
-  outputAmount: CurrencyAmount<Currency>
+  routev3: V3Route<Currency, Currency> | null;
+  routev2: V2Route<Currency, Currency> | null;
+  mixedRoute: MixedRouteSDK<Currency, Currency> | null;
+  inputAmount: CurrencyAmount<Currency>;
+  outputAmount: CurrencyAmount<Currency>;
 }
 
 /**
  * Transforms a Routing API quote into an array of routes that can be used to
  * create a `Trade`.
  */
-export function computeRoutes(args: GetQuoteArgs, routes: ClassicQuoteData['route']): RouteResult[] | undefined {
-  if (routes.length === 0) return []
-  const [currencyIn, currencyOut] = getTradeCurrencies(args, false, routes)
+export function computeRoutes(
+  args: GetQuoteArgs,
+  routes: ClassicQuoteData["route"],
+): RouteResult[] | undefined {
+  if (routes.length === 0) return [];
+  const [currencyIn, currencyOut] = getTradeCurrencies(args, false, routes);
 
   try {
     return routes.map((route) => {
       if (route.length === 0) {
-        throw new Error('Expected route to have at least one pair or pool')
+        throw new Error("Expected route to have at least one pair or pool");
       }
-      const rawAmountIn = route[0].amountIn
-      const rawAmountOut = route[route.length - 1].amountOut
+      const rawAmountIn = route[0].amountIn;
+      const rawAmountOut = route[route.length - 1].amountOut;
 
       if (!rawAmountIn || !rawAmountOut) {
-        throw new Error('Expected both amountIn and amountOut to be present')
+        throw new Error("Expected both amountIn and amountOut to be present");
       }
 
-      const isOnlyV2 = isVersionedRoute<V2PoolInRoute>(PoolType.V2Pool, route)
-      const isOnlyV3 = isVersionedRoute<V3PoolInRoute>(PoolType.V3Pool, route)
-      let v3 = null
+      const isOnlyV2 = isVersionedRoute<V2PoolInRoute>(PoolType.V2Pool, route);
+      const isOnlyV3 = isVersionedRoute<V3PoolInRoute>(PoolType.V3Pool, route);
+      let v3 = null;
 
       try {
-
-        v3 = new V3Route(route.map(parsePool), currencyIn, currencyOut)
+        v3 = new V3Route(route.map(parsePool), currencyIn, currencyOut);
       } catch (e) {
-        console.error('Error computing routes ===>', e)
-      
+        console.error("Error computing routes ===>", e);
       }
-      console.log('v3====>',v3,isOnlyV3)
-      console.log('computeRoutes',isOnlyV2,isOnlyV3,route.map(parsePool),currencyIn,{
-        routev3: isOnlyV3 ? v3 : null,
-        routev2: isOnlyV2 ? new V2Route(route.map(parsePair), currencyIn, currencyOut) : null,
-        mixedRoute:
-          !isOnlyV3 && !isOnlyV2 ? new MixedRouteSDK(route.map(parsePoolOrPair), currencyIn, currencyOut) : null,
-        inputAmount: CurrencyAmount.fromRawAmount(currencyIn, rawAmountIn),
-        outputAmount: CurrencyAmount.fromRawAmount(currencyOut, rawAmountOut),
-      })
+      console.log("v3====>", v3, isOnlyV3);
+      console.log(
+        "computeRoutes",
+        isOnlyV2,
+        isOnlyV3,
+        route.map(parsePool),
+        currencyIn,
+        {
+          routev3: isOnlyV3 ? v3 : null,
+          routev2: isOnlyV2
+            ? new V2Route(route.map(parsePair), currencyIn, currencyOut)
+            : null,
+          mixedRoute:
+            !isOnlyV3 && !isOnlyV2
+              ? new MixedRouteSDK(
+                  route.map(parsePoolOrPair),
+                  currencyIn,
+                  currencyOut,
+                )
+              : null,
+          inputAmount: CurrencyAmount.fromRawAmount(currencyIn, rawAmountIn),
+          outputAmount: CurrencyAmount.fromRawAmount(currencyOut, rawAmountOut),
+        },
+      );
 
       return {
-        routev3: isOnlyV3 ? v3: null,
-        routev2: isOnlyV2 ? new V2Route(route.map(parsePair), currencyIn, currencyOut) : null,
+        routev3: isOnlyV3 ? v3 : null,
+        routev2: isOnlyV2
+          ? new V2Route(route.map(parsePair), currencyIn, currencyOut)
+          : null,
         mixedRoute:
-          !isOnlyV3 && !isOnlyV2 ? new MixedRouteSDK(route.map(parsePoolOrPair), currencyIn, currencyOut) : null,
+          !isOnlyV3 && !isOnlyV2
+            ? new MixedRouteSDK(
+                route.map(parsePoolOrPair),
+                currencyIn,
+                currencyOut,
+              )
+            : null,
         inputAmount: CurrencyAmount.fromRawAmount(currencyIn, rawAmountIn),
         outputAmount: CurrencyAmount.fromRawAmount(currencyOut, rawAmountOut),
-      }
-    })
+      };
+    });
   } catch (e) {
-    console.error('Error computing routes', e)
+    console.error("Error computing routes", e);
     // return
   }
 }

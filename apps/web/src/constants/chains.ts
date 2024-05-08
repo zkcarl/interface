@@ -1,4 +1,9 @@
-import { ChainId, SUPPORTED_CHAINS, SupportedChainsType, V2_ROUTER_ADDRESSES } from '@uniswap/sdk-core'
+import {
+  ChainId,
+  SUPPORTED_CHAINS,
+  SupportedChainsType,
+  V2_ROUTER_ADDRESSES,
+} from "@novaswap/sdk-core";
 
 export const CHAIN_IDS_TO_NAMES = {
   [ChainId.MAINNET]: "mainnet",
@@ -42,7 +47,7 @@ export type SupportedInterfaceChain = Exclude<
 
 export function isSupportedChain(
   chainId: number | null | undefined | ChainId,
-  featureFlags?: Record<number, boolean>
+  featureFlags?: Record<number, boolean>,
 ): chainId is SupportedInterfaceChain {
   if (featureFlags && chainId && chainId in featureFlags) {
     return featureFlags[chainId];
@@ -56,7 +61,7 @@ export function isSupportedChain(
 
 export function asSupportedChain(
   chainId: number | null | undefined | ChainId,
-  featureFlags?: Record<number, boolean>
+  featureFlags?: Record<number, boolean>,
 ): SupportedInterfaceChain | undefined {
   if (!chainId) return undefined;
   if (featureFlags && chainId in featureFlags && !featureFlags[chainId]) {
@@ -75,7 +80,7 @@ export const SUPPORTED_GAS_ESTIMATE_CHAIN_IDS = [
   ChainId.AVALANCHE,
   ChainId.BASE,
   ChainId.BLAST,
-  ChainId.NOVA_SEPOLIA,
+  // ChainId.NOVA_SEPOLIA,
 ] as const;
 
 /**
@@ -86,7 +91,7 @@ export const SUPPORTED_V2POOL_CHAIN_IDS_DEPRECATED = [
   ChainId.GOERLI,
 ] as const;
 export const SUPPORTED_V2POOL_CHAIN_IDS = Object.keys(V2_ROUTER_ADDRESSES).map(
-  (chainId) => parseInt(chainId)
+  (chainId) => parseInt(chainId),
 );
 
 export const TESTNET_CHAIN_IDS = [
@@ -112,6 +117,7 @@ export const L1_CHAIN_IDS = [
   ChainId.CELO_ALFAJORES,
   ChainId.BNB,
   ChainId.AVALANCHE,
+  ChainId.NOVA_SEPOLIA,
 ] as const;
 
 export type SupportedL1ChainId = (typeof L1_CHAIN_IDS)[number];
@@ -127,7 +133,7 @@ export const L2_CHAIN_IDS = [
   ChainId.OPTIMISM_GOERLI,
   ChainId.BASE,
   ChainId.BLAST,
-  ChainId.NOVA_SEPOLIA,
+  // ChainId.NOVA_SEPOLIA,
 ] as const;
 
 export type SupportedL2ChainId = (typeof L2_CHAIN_IDS)[number];
@@ -170,5 +176,5 @@ export function getChainPriority(chainId: ChainId): number {
 }
 
 export function isUniswapXSupportedChain(chainId: number) {
-  return chainId === ChainId.MAINNET
+  return chainId === ChainId.MAINNET;
 }

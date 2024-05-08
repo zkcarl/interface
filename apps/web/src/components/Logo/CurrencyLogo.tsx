@@ -1,12 +1,12 @@
-import { Currency } from '@uniswap/sdk-core'
-import { TokenInfo } from '@uniswap/token-lists'
+import { Currency } from "@novaswap/sdk-core";
+import { TokenInfo } from "@uniswap/token-lists";
 
-import AssetLogo, { AssetLogoBaseProps } from './AssetLogo'
+import AssetLogo, { AssetLogoBaseProps } from "./AssetLogo";
 
 export default function CurrencyLogo(
   props: AssetLogoBaseProps & {
-    currency?: Currency | null
-  }
+    currency?: Currency | null;
+  },
 ) {
   return (
     <AssetLogo
@@ -18,5 +18,5 @@ export default function CurrencyLogo(
       primaryImg={(props.currency as TokenInfo)?.logoURI}
       {...props}
     />
-  )
+  );
 }

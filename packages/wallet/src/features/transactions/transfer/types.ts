@@ -1,62 +1,64 @@
-import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
-import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
-import { ChainId } from 'wallet/src/constants/chains'
-import { AssetType, NFTAssetType } from 'wallet/src/entities/assets'
-import { GQLNftAsset } from 'wallet/src/features/nfts/hooks'
-import { CurrencyField } from 'wallet/src/features/transactions/transactionState/types'
-import { Account } from 'wallet/src/features/wallet/accounts/types'
+import { Currency, CurrencyAmount } from "@novaswap/sdk-core";
+import { CurrencyInfo } from "uniswap/src/features/dataApi/types";
+import { ChainId } from "wallet/src/constants/chains";
+import { AssetType, NFTAssetType } from "wallet/src/entities/assets";
+import { GQLNftAsset } from "wallet/src/features/nfts/hooks";
+import { CurrencyField } from "wallet/src/features/transactions/transactionState/types";
+import { Account } from "wallet/src/features/wallet/accounts/types";
 
 interface BaseTransferParams {
-  type: AssetType
-  txId?: string
-  account: Account
-  chainId: ChainId
-  toAddress: Address
-  tokenAddress: Address
+  type: AssetType;
+  txId?: string;
+  account: Account;
+  chainId: ChainId;
+  toAddress: Address;
+  tokenAddress: Address;
 }
 
 export interface TransferCurrencyParams extends BaseTransferParams {
-  type: AssetType.Currency
-  amountInWei: string
+  type: AssetType.Currency;
+  amountInWei: string;
 }
 
 export interface TransferNFTParams extends BaseTransferParams {
-  type: NFTAssetType
-  tokenId: string
+  type: NFTAssetType;
+  tokenId: string;
 }
 
-export type TransferTokenParams = TransferCurrencyParams | TransferNFTParams
+export type TransferTokenParams = TransferCurrencyParams | TransferNFTParams;
 
 export type BaseDerivedInfo<TInput = CurrencyInfo> = {
   currencies: {
-    [CurrencyField.INPUT]: Maybe<TInput>
-  }
+    [CurrencyField.INPUT]: Maybe<TInput>;
+  };
   currencyAmounts: {
-    [CurrencyField.INPUT]: Maybe<CurrencyAmount<Currency>>
-  }
+    [CurrencyField.INPUT]: Maybe<CurrencyAmount<Currency>>;
+  };
   currencyBalances: {
-    [CurrencyField.INPUT]: Maybe<CurrencyAmount<Currency>>
-  }
-  exactAmountFiat?: string
-  exactAmountToken: string
-  exactCurrencyField: CurrencyField
-}
+    [CurrencyField.INPUT]: Maybe<CurrencyAmount<Currency>>;
+  };
+  exactAmountFiat?: string;
+  exactAmountToken: string;
+  exactCurrencyField: CurrencyField;
+};
 
-export type DerivedTransferInfo = BaseDerivedInfo<CurrencyInfo | GQLNftAsset> & {
-  currencyTypes: { [CurrencyField.INPUT]?: AssetType }
-  currencyInInfo?: CurrencyInfo | null
-  chainId: ChainId
-  exactAmountFiat: string
-  exactCurrencyField: CurrencyField.INPUT
-  isFiatInput?: boolean
-  nftIn: GQLNftAsset | undefined
-  recipient?: string
-  txId?: string
-}
+export type DerivedTransferInfo = BaseDerivedInfo<
+  CurrencyInfo | GQLNftAsset
+> & {
+  currencyTypes: { [CurrencyField.INPUT]?: AssetType };
+  currencyInInfo?: CurrencyInfo | null;
+  chainId: ChainId;
+  exactAmountFiat: string;
+  exactCurrencyField: CurrencyField.INPUT;
+  isFiatInput?: boolean;
+  nftIn: GQLNftAsset | undefined;
+  recipient?: string;
+  txId?: string;
+};
 
 export interface TransferSpeedbump {
-  hasWarning: boolean
-  loading: boolean
+  hasWarning: boolean;
+  loading: boolean;
 }
 
 export enum TokenSelectorFlow {

@@ -3,7 +3,7 @@
 
 jest.mock('hooks/Tokens')
 
-import { ChainId, Currency, WETH9 } from '@uniswap/sdk-core'
+import { ChainId, Currency, WETH9 } from "@novaswap/sdk-core";
 import { COMMON_BASES } from 'constants/routing'
 import { DAI, DAI_ARBITRUM_ONE, USDC_ARBITRUM, USDC_MAINNET, USDT, WBTC } from 'constants/tokens'
 import { useCurrency, useCurrencyInfo } from 'hooks/Tokens'

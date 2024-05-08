@@ -1,5 +1,10 @@
 import { skipToken } from '@reduxjs/toolkit/query/react'
-import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
+import {
+  Currency,
+  CurrencyAmount,
+  Percent,
+  TradeType,
+} from "@novaswap/sdk-core";
 import { AVERAGE_L1_BLOCK_TIME } from 'constants/chainInfo'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useRoutingAPIArguments } from 'lib/hooks/routing/useRoutingAPIArguments'

@@ -1,12 +1,15 @@
-import { Currency, CurrencyAmount } from '@uniswap/sdk-core'
-import { providers } from 'ethers'
-import { useMemo } from 'react'
-import { logger } from 'utilities/src/logger/logger'
-import { isWrapAction } from 'wallet/src/features/transactions/swap/utils'
-import { WrapParams, tokenWrapActions } from 'wallet/src/features/transactions/swap/wrapSaga'
-import { WrapType } from 'wallet/src/features/transactions/types'
-import { useActiveAccount } from 'wallet/src/features/wallet/hooks'
-import { useAppDispatch } from 'wallet/src/state'
+import { Currency, CurrencyAmount } from "@novaswap/sdk-core";
+import { providers } from "ethers";
+import { useMemo } from "react";
+import { logger } from "utilities/src/logger/logger";
+import { isWrapAction } from "wallet/src/features/transactions/swap/utils";
+import {
+  WrapParams,
+  tokenWrapActions,
+} from "wallet/src/features/transactions/swap/wrapSaga";
+import { WrapType } from "wallet/src/features/transactions/types";
+import { useActiveAccount } from "wallet/src/features/wallet/hooks";
+import { useAppDispatch } from "wallet/src/state";
 
 export function useWrapCallback(
   inputCurrencyAmount: CurrencyAmount<Currency> | null | undefined,
@@ -15,35 +18,38 @@ export function useWrapCallback(
   txRequest?: providers.TransactionRequest,
   txId?: string
 ): {
-  wrapCallback: () => void
+  wrapCallback: () => void;
 } {
-  const appDispatch = useAppDispatch()
-  const account = useActiveAccount()
+  const appDispatch = useAppDispatch();
+  const account = useActiveAccount();
 
   return useMemo(() => {
     if (!isWrapAction(wrapType)) {
       return {
         wrapCallback: (): void =>
-          logger.error(new Error('Attempted wrap on a non-wrap transaction'), {
+          logger.error(new Error("Attempted wrap on a non-wrap transaction"), {
             tags: {
-              file: 'swap/hooks',
-              function: 'useWrapCallback',
+              file: "swap/hooks",
+              function: "useWrapCallback",
             },
           }),
-      }
+      };
     }
 
     if (!account || !inputCurrencyAmount || !txRequest) {
       return {
         wrapCallback: (): void =>
-          logger.error(new Error('Attempted wrap with missing required parameters'), {
-            tags: {
-              file: 'swap/hooks',
-              function: 'useWrapCallback',
-            },
-            extra: { account, inputCurrencyAmount, txRequest },
-          }),
-      }
+          logger.error(
+            new Error("Attempted wrap with missing required parameters"),
+            {
+              tags: {
+                file: "swap/hooks",
+                function: "useWrapCallback",
+              },
+              extra: { account, inputCurrencyAmount, txRequest },
+            }
+          ),
+      };
     }
 
     return {
@@ -53,11 +59,19 @@ export function useWrapCallback(
           inputCurrencyAmount,
           txId,
           txRequest,
-        }
+        };
 
-        appDispatch(tokenWrapActions.trigger(params))
-        onSuccess()
+        appDispatch(tokenWrapActions.trigger(params));
+        onSuccess();
       },
-    }
-  }, [txId, account, appDispatch, inputCurrencyAmount, wrapType, txRequest, onSuccess])
+    };
+  }, [
+    txId,
+    account,
+    appDispatch,
+    inputCurrencyAmount,
+    wrapType,
+    txRequest,
+    onSuccess,
+  ]);
 }

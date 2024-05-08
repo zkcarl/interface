@@ -1,18 +1,29 @@
-import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
-import { useWeb3React } from '@web3-react/core'
-import { WRAPPED_NATIVE_CURRENCY } from 'constants/tokens'
-import { useMemo } from 'react'
-import { ClassicTrade, InterfaceTrade, QuoteMethod, RouterPreference, TradeState } from 'state/routing/types'
-import { usePreviewTrade } from 'state/routing/usePreviewTrade'
-import { useRoutingAPITrade } from 'state/routing/useRoutingAPITrade'
-import { useRouterPreference } from 'state/user/hooks'
+import {
+  Currency,
+  CurrencyAmount,
+  Percent,
+  TradeType,
+} from "@novaswap/sdk-core";
+import { useWeb3React } from "@web3-react/core";
+import { WRAPPED_NATIVE_CURRENCY } from "constants/tokens";
+import { useMemo } from "react";
+import {
+  ClassicTrade,
+  InterfaceTrade,
+  QuoteMethod,
+  RouterPreference,
+  TradeState,
+} from "state/routing/types";
+import { usePreviewTrade } from "state/routing/usePreviewTrade";
+import { useRoutingAPITrade } from "state/routing/useRoutingAPITrade";
+import { useRouterPreference } from "state/user/hooks";
 
-import useAutoRouterSupported from './useAutoRouterSupported'
-import useDebounce from './useDebounce'
+import useAutoRouterSupported from "./useAutoRouterSupported";
+import useDebounce from "./useDebounce";
 
 // Prevents excessive quote requests between keystrokes.
-const DEBOUNCE_TIME = 350
-const DEBOUNCE_TIME_QUICKROUTE = 50
+const DEBOUNCE_TIME = 350;
+const DEBOUNCE_TIME_QUICKROUTE = 50;
 
 export function useDebouncedTrade(
   tradeType: TradeType,
@@ -21,12 +32,12 @@ export function useDebouncedTrade(
   routerPreferenceOverride?: RouterPreference.X,
   account?: string,
   inputTax?: Percent,
-  outputTax?: Percent
+  outputTax?: Percent,
 ): {
-  state: TradeState
-  trade?: InterfaceTrade
-  swapQuoteLatency?: number
-}
+  state: TradeState;
+  trade?: InterfaceTrade;
+  swapQuoteLatency?: number;
+};
 
 export function useDebouncedTrade(
   tradeType: TradeType,
@@ -35,12 +46,12 @@ export function useDebouncedTrade(
   routerPreferenceOverride?: RouterPreference.API,
   account?: string,
   inputTax?: Percent,
-  outputTax?: Percent
+  outputTax?: Percent,
 ): {
-  state: TradeState
-  trade?: ClassicTrade
-  swapQuoteLatency?: number
-}
+  state: TradeState;
+  trade?: ClassicTrade;
+  swapQuoteLatency?: number;
+};
 /**
  * Returns the debounced v2+v3 trade for a desired swap.
  * @param tradeType whether the swap is an exact in/out
@@ -57,39 +68,39 @@ export function useDebouncedTrade(
   routerPreferenceOverride?: RouterPreference,
   account?: string,
   inputTax?: Percent,
-  outputTax?: Percent
+  outputTax?: Percent,
 ): {
-  state: TradeState
-  trade?: InterfaceTrade
-  method?: QuoteMethod
-  swapQuoteLatency?: number
+  state: TradeState;
+  trade?: InterfaceTrade;
+  method?: QuoteMethod;
+  swapQuoteLatency?: number;
 } {
-  const { chainId } = useWeb3React()
-  const autoRouterSupported = useAutoRouterSupported()
+  const { chainId } = useWeb3React();
+  const autoRouterSupported = useAutoRouterSupported();
 
-  const inputs = useMemo<[CurrencyAmount<Currency> | undefined, Currency | undefined]>(
-    () => [amountSpecified, otherCurrency],
-    [amountSpecified, otherCurrency]
-  )
-  const isDebouncing = useDebounce(inputs, DEBOUNCE_TIME) !== inputs
+  const inputs = useMemo<
+    [CurrencyAmount<Currency> | undefined, Currency | undefined]
+  >(() => [amountSpecified, otherCurrency], [amountSpecified, otherCurrency]);
+  const isDebouncing = useDebounce(inputs, DEBOUNCE_TIME) !== inputs;
 
-  const isPreviewTradeDebouncing = useDebounce(inputs, DEBOUNCE_TIME_QUICKROUTE) !== inputs
+  const isPreviewTradeDebouncing =
+    useDebounce(inputs, DEBOUNCE_TIME_QUICKROUTE) !== inputs;
 
   const isWrap = useMemo(() => {
-    if (!chainId || !amountSpecified || !otherCurrency) return false
-    const weth = WRAPPED_NATIVE_CURRENCY[chainId]
+    if (!chainId || !amountSpecified || !otherCurrency) return false;
+    const weth = WRAPPED_NATIVE_CURRENCY[chainId];
     return Boolean(
       (amountSpecified.currency.isNative && weth?.equals(otherCurrency)) ||
-        (otherCurrency.isNative && weth?.equals(amountSpecified.currency))
-    )
-  }, [amountSpecified, chainId, otherCurrency])
+        (otherCurrency.isNative && weth?.equals(amountSpecified.currency)),
+    );
+  }, [amountSpecified, chainId, otherCurrency]);
 
-  const [routerPreference] = useRouterPreference()
+  const [routerPreference] = useRouterPreference();
 
-  const skipBothFetches = !autoRouterSupported || isWrap
-  const skipRoutingFetch = skipBothFetches || isDebouncing
+  const skipBothFetches = !autoRouterSupported || isWrap;
+  const skipRoutingFetch = skipBothFetches || isDebouncing;
 
-  const skipPreviewTradeFetch = skipBothFetches || isPreviewTradeDebouncing
+  const skipPreviewTradeFetch = skipBothFetches || isPreviewTradeDebouncing;
 
   const previewTradeResult = usePreviewTrade(
     skipPreviewTradeFetch,
@@ -97,10 +108,10 @@ export function useDebouncedTrade(
     amountSpecified,
     otherCurrency,
     inputTax,
-    outputTax
-  )
+    outputTax,
+  );
 
-  console.log('useDebouncedTrade===>previewTradeResult',previewTradeResult)
+  console.log("useDebouncedTrade===>previewTradeResult", previewTradeResult);
   const routingApiTradeResult = useRoutingAPITrade(
     skipRoutingFetch,
     tradeType,
@@ -109,10 +120,10 @@ export function useDebouncedTrade(
     routerPreferenceOverride ?? routerPreference,
     account,
     inputTax,
-    outputTax
-  )
-  console.log('useDebouncedTrade===>routingApiTradeResult',previewTradeResult)
+    outputTax,
+  );
+  console.log("useDebouncedTrade===>routingApiTradeResult", previewTradeResult);
   return previewTradeResult.currentTrade && !routingApiTradeResult.currentTrade
     ? previewTradeResult
-    : routingApiTradeResult
+    : routingApiTradeResult;
 }

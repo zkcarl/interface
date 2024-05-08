@@ -1,4 +1,4 @@
-import { Percent } from '@uniswap/sdk-core'
+import { Percent } from "@novaswap/sdk-core";
 
 export enum SlippageValidationResult {
   TooLow,
@@ -6,15 +6,17 @@ export enum SlippageValidationResult {
   Valid,
 }
 
-export const MINIMUM_RECOMMENDED_SLIPPAGE = new Percent(5, 10_000)
-export const MAXIMUM_RECOMMENDED_SLIPPAGE = new Percent(1, 100)
+export const MINIMUM_RECOMMENDED_SLIPPAGE = new Percent(5, 10_000);
+export const MAXIMUM_RECOMMENDED_SLIPPAGE = new Percent(1, 100);
 
-export default function validateUserSlippageTolerance(userSlippageTolerance: Percent) {
+export default function validateUserSlippageTolerance(
+  userSlippageTolerance: Percent,
+) {
   if (userSlippageTolerance.lessThan(MINIMUM_RECOMMENDED_SLIPPAGE)) {
-    return SlippageValidationResult.TooLow
+    return SlippageValidationResult.TooLow;
   } else if (userSlippageTolerance.greaterThan(MAXIMUM_RECOMMENDED_SLIPPAGE)) {
-    return SlippageValidationResult.TooHigh
+    return SlippageValidationResult.TooHigh;
   } else {
-    return SlippageValidationResult.Valid
+    return SlippageValidationResult.Valid;
   }
 }

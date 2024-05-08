@@ -1,29 +1,35 @@
-import { Pool } from '@uniswap/v3-sdk'
-import { useWeb3React } from '@web3-react/core'
-import useMultiChainPositions from 'components/AccountDrawer/MiniPortfolio/Pools/useMultiChainPositions'
-import Column from 'components/Column'
-import { PoolDetailsPositionsTable } from 'components/Pools/PoolDetails/PoolDetailsPositionsTable'
-import Row from 'components/Row'
-import { supportedChainIdFromGQLChain, validateUrlChainParam } from 'graphql/data/util'
-import { Trans } from 'i18n'
-import { useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import styled from 'styled-components'
-import { ClickableStyle, ThemedText } from 'theme/components'
-import { ProtocolVersion, Token } from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
+import { Pool } from "@novaswap/v3-sdk";
+import { useWeb3React } from "@web3-react/core";
+import useMultiChainPositions from "components/AccountDrawer/MiniPortfolio/Pools/useMultiChainPositions";
+import Column from "components/Column";
+import { PoolDetailsPositionsTable } from "components/Pools/PoolDetails/PoolDetailsPositionsTable";
+import Row from "components/Row";
+import {
+  supportedChainIdFromGQLChain,
+  validateUrlChainParam,
+} from "graphql/data/util";
+import { Trans } from "i18n";
+import { useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
+import styled from "styled-components";
+import { ClickableStyle, ThemedText } from "theme/components";
+import {
+  ProtocolVersion,
+  Token,
+} from "uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks";
 
-import { PoolDetailsTransactionsTable } from './PoolDetailsTransactionsTable'
+import { PoolDetailsTransactionsTable } from "./PoolDetailsTransactionsTable";
 
 enum PoolDetailsTableTabs {
-  TRANSACTIONS = 'transactions',
-  POSITIONS = 'positions',
+  TRANSACTIONS = "transactions",
+  POSITIONS = "positions",
 }
 
 const TableHeader = styled(ThemedText.HeadlineMedium)<{ active: boolean }>`
   color: ${({ theme, active }) => !active && theme.neutral2};
   ${({ disabled }) => !disabled && ClickableStyle}
   user-select: none;
-`
+`;
 
 export function PoolDetailsTableTab({
   poolAddress,
@@ -31,25 +37,32 @@ export function PoolDetailsTableTab({
   token1,
   protocolVersion,
 }: {
-  poolAddress: string
-  token0?: Token
-  token1?: Token
-  protocolVersion?: ProtocolVersion
+  poolAddress: string;
+  token0?: Token;
+  token1?: Token;
+  protocolVersion?: ProtocolVersion;
 }) {
-  const [activeTable, setActiveTable] = useState<PoolDetailsTableTabs>(PoolDetailsTableTabs.TRANSACTIONS)
-  const chainName = validateUrlChainParam(useParams<{ chainName?: string }>().chainName)
-  const chainId = supportedChainIdFromGQLChain(chainName)
-  const { account } = useWeb3React()
-  const { positions } = useMultiChainPositions(account ?? '', [chainId])
+  const [activeTable, setActiveTable] = useState<PoolDetailsTableTabs>(
+    PoolDetailsTableTabs.TRANSACTIONS,
+  );
+  const chainName = validateUrlChainParam(
+    useParams<{ chainName?: string }>().chainName,
+  );
+  const chainId = supportedChainIdFromGQLChain(chainName);
+  const { account } = useWeb3React();
+  const { positions } = useMultiChainPositions(account ?? "", [chainId]);
   const positionsInThisPool = useMemo(
     () =>
       positions?.filter(
         (position) =>
-          Pool.getAddress(position.pool.token0, position.pool.token1, position.pool.fee).toLowerCase() ===
-          poolAddress.toLowerCase()
+          Pool.getAddress(
+            position.pool.token0,
+            position.pool.token1,
+            position.pool.fee,
+          ).toLowerCase() === poolAddress.toLowerCase(),
       ) ?? [],
-    [poolAddress, positions]
-  )
+    [poolAddress, positions],
+  );
   return (
     <Column gap="lg">
       <Row gap="16px">
@@ -81,5 +94,5 @@ export function PoolDetailsTableTab({
         <PoolDetailsPositionsTable positions={positionsInThisPool} />
       )}
     </Column>
-  )
+  );
 }

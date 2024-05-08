@@ -1,8 +1,16 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import type { TransactionResponse } from '@ethersproject/providers'
 import { InterfacePageName, LiquidityEventName, LiquiditySource } from '@uniswap/analytics-events'
-import { ChainId, Currency, CurrencyAmount, Fraction, Percent, Price, Token } from '@uniswap/sdk-core'
-import { NonfungiblePositionManager, Pool, Position } from '@uniswap/v3-sdk'
+import {
+  ChainId,
+  Currency,
+  CurrencyAmount,
+  Fraction,
+  Percent,
+  Price,
+  Token,
+} from "@novaswap/sdk-core";
+import { NonfungiblePositionManager, Pool, Position } from "@novaswap/v3-sdk";
 import { useWeb3React } from '@web3-react/core'
 import { sendAnalyticsEvent, Trace } from 'analytics'
 import Badge from 'components/Badge'

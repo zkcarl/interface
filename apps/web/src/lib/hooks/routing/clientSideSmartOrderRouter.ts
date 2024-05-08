@@ -1,21 +1,40 @@
-import { BigintIsh, ChainId, CurrencyAmount, Token, TradeType } from '@uniswap/sdk-core'
+import {
+  BigintIsh,
+  ChainId,
+  CurrencyAmount,
+  Token,
+  TradeType,
+} from "@novaswap/sdk-core";
 // This file is lazy-loaded, so the import of smart-order-router is intentional.
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import {
   AlphaRouter,
   AlphaRouterConfig,
-  LegacyRouter,
-  OnChainQuoteProvider,
-  TokenProvider,
-  UniswapMulticallProvider,
-  V3PoolProvider,
-} from "@uniswap/smart-order-router";
-import { asSupportedChain } from 'constants/chains'
-import { RPC_PROVIDERS } from 'constants/providers'
-import { nativeOnChain } from 'constants/tokens'
-import JSBI from 'jsbi'
-import { GetQuoteArgs, QuoteResult, QuoteState, SwapRouterNativeAssets } from 'state/routing/types'
-import { transformSwapRouteToGetQuoteResult } from 'utils/transformSwapRouteToGetQuoteResult'
+  // CachingTokenProviderWithFallback,
+  // LegacyRouter,
+  // OnChainQuoteProvider,
+  // TokenProvider,
+  // UniswapMulticallProvider,
+  // V3PoolProvider,
+} from "@novaswap/smart-order-router";
+import { asSupportedChain } from "constants/chains";
+import { RPC_PROVIDERS } from "constants/providers";
+import { nativeOnChain } from "constants/tokens";
+import JSBI from "jsbi";
+import { UniswapMulticallProvider } from "providers/multicall-uniswap-provider";
+import { OnChainQuoteProvider } from "providers/on-chain-quote-provider";
+import { V3PoolProvider } from "providers/pool-provider";
+import { TokenProvider } from "providers/token-provider";
+import { LegacyRouter } from "routers/legacy-router";
+import {
+  GetQuoteArgs,
+  QuoteResult,
+  QuoteState,
+  SwapRouterNativeAssets,
+} from "state/routing/types";
+import { transformSwapRouteToGetQuoteResult } from "utils/transformSwapRouteToGetQuoteResult";
+import NodeCache from "node-cache";
+import { CachingTokenProviderWithFallback } from "providers/caching-token-provider";
 
 const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
   ChainId.MAINNET,
@@ -34,20 +53,19 @@ const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
   ChainId.AVALANCHE,
   ChainId.BASE,
 ];
-const routers = new Map<ChainId, AlphaRouter>()
-export function getRouter(chainId: ChainId): AlphaRouter {
+const routers = new Map<ChainId, AlphaRouter>();
+export async function getRouter(chainId: ChainId): Promise<AlphaRouter> {
   const router = routers.get(chainId);
-  console.log(router,'router_____res')
+  // console.log(router, "router_____res");
   if (router) return router;
-
-  const supportedChainId = asSupportedChain(chainId);
-  if (supportedChainId && CLIENT_SIDE_ROUTING_ALLOW_LIST.includes(chainId)) {
+  const supportedChainId = 810181;
+  // const tokenCache = new NodeJSCache<Token>(
+  //   new NodeCache({ stdTTL: 3600, useClones: false }),
+  // );
+  if (supportedChainId) {
     const provider = RPC_PROVIDERS[supportedChainId];
-    const multicallProvider = new UniswapMulticallProvider(
-      chainId,
-      provider,
-      375_000
-    );
+    const multicallProvider = new UniswapMulticallProvider(chainId, provider);
+    console.log(multicallProvider, "multicallProvider");
     const tokenProvider = new TokenProvider(chainId, multicallProvider);
     const router = new LegacyRouter({
       chainId,
@@ -56,17 +74,17 @@ export function getRouter(chainId: ChainId): AlphaRouter {
       quoteProvider: new OnChainQuoteProvider(
         chainId,
         provider,
-        multicallProvider
+        multicallProvider,
       ),
       tokenProvider,
     });
-    // const router = new AlphaRouter({ chainId, provider })
+    console.log(router, "router-legacy-router");
+    // // const router = new AlphaRouter({ chainId, provider })
     routers.set(chainId, router);
     return router;
   }
 
-
-  throw new Error(`Router does not support this chain (chainId: ${chainId}).`)
+  throw new Error(`Router does not support this chain (chainId: ${chainId}).`);
 }
 
 async function getQuote(
@@ -76,36 +94,72 @@ async function getQuote(
     tokenOut,
     amount: amountRaw,
   }: {
-    tradeType: TradeType
-    tokenIn: { address: string; chainId: number; decimals: number; symbol?: string }
-    tokenOut: { address: string; chainId: number; decimals: number; symbol?: string }
-    amount: BigintIsh
+    tradeType: TradeType;
+    tokenIn: {
+      address: string;
+      chainId: number;
+      decimals: number;
+      symbol?: string;
+    };
+    tokenOut: {
+      address: string;
+      chainId: number;
+      decimals: number;
+      symbol?: string;
+    };
+    amount: BigintIsh;
   },
   router: AlphaRouter,
-  routerConfig: Partial<AlphaRouterConfig>
+  routerConfig: Partial<AlphaRouterConfig>,
 ): Promise<QuoteResult> {
-  const tokenInIsNative = Object.values(SwapRouterNativeAssets).includes(tokenIn.address as SwapRouterNativeAssets)
-  const tokenOutIsNative = Object.values(SwapRouterNativeAssets).includes(tokenOut.address as SwapRouterNativeAssets)
+  const tokenInIsNative = Object.values(SwapRouterNativeAssets).includes(
+    tokenIn.address as SwapRouterNativeAssets,
+  );
+  const tokenOutIsNative = Object.values(SwapRouterNativeAssets).includes(
+    tokenOut.address as SwapRouterNativeAssets,
+  );
 
   const currencyIn = tokenInIsNative
     ? nativeOnChain(tokenIn.chainId)
-    : new Token(tokenIn.chainId, tokenIn.address, tokenIn.decimals, tokenIn.symbol)
+    : new Token(
+        tokenIn.chainId,
+        tokenIn.address,
+        tokenIn.decimals,
+        tokenIn.symbol,
+      );
   const currencyOut = tokenOutIsNative
     ? nativeOnChain(tokenOut.chainId)
-    : new Token(tokenOut.chainId, tokenOut.address, tokenOut.decimals, tokenOut.symbol)
+    : new Token(
+        tokenOut.chainId,
+        tokenOut.address,
+        tokenOut.decimals,
+        tokenOut.symbol,
+      );
 
-  const baseCurrency = tradeType === TradeType.EXACT_INPUT ? currencyIn : currencyOut
-  const quoteCurrency = tradeType === TradeType.EXACT_INPUT ? currencyOut : currencyIn
+  const baseCurrency =
+    tradeType === TradeType.EXACT_INPUT ? currencyIn : currencyOut;
+  const quoteCurrency =
+    tradeType === TradeType.EXACT_INPUT ? currencyOut : currencyIn;
 
-  const amount = CurrencyAmount.fromRawAmount(baseCurrency, JSBI.BigInt(amountRaw))
+  const amount = CurrencyAmount.fromRawAmount(
+    baseCurrency,
+    JSBI.BigInt(amountRaw),
+  );
   // TODO (WEB-2055): explore initializing client side routing on first load (when amountRaw is null) if there are enough users using client-side router preference.
-  const swapRoute = await router.route(amount, quoteCurrency, tradeType, /*swapConfig=*/ undefined, routerConfig)
+  const swapRoute = await router.route(
+    amount,
+    quoteCurrency,
+    tradeType,
+    /*swapConfig=*/ undefined,
+    routerConfig,
+  );
 
   if (!swapRoute) {
-    return { state: QuoteState.NOT_FOUND }
+    return { state: QuoteState.NOT_FOUND };
   }
 
-  return transformSwapRouteToGetQuoteResult(tradeType, amount, swapRoute)
+  console.log(swapRoute, "swapRoute", tradeType, "tradeType", amount, "amount");
+  return transformSwapRouteToGetQuoteResult(tradeType, amount, swapRoute);
 }
 
 export async function getClientSideQuote(
@@ -122,8 +176,9 @@ export async function getClientSideQuote(
     tradeType,
   }: GetQuoteArgs,
   router: AlphaRouter,
-  config: Partial<AlphaRouterConfig>
+  config: Partial<AlphaRouterConfig>,
 ) {
+  console.log("getClientSideQuote");
   return getQuote(
     {
       tradeType,
@@ -142,6 +197,6 @@ export async function getClientSideQuote(
       amount,
     },
     router,
-    config
-  )
+    config,
+  );
 }
