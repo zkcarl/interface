@@ -30,18 +30,18 @@ export function getChainUI(
   darkMode: boolean,
 ): ChainUI | undefined {
   switch (chainId) {
+    case ChainId.NOVA_SEPOLIA:
+      return {
+        Symbol: zklink,
+        bgColor: "transparent",
+        textColor: "transparent",
+      };
     case ChainId.MAINNET:
     case ChainId.GOERLI:
     case ChainId.SEPOLIA:
       return {
         Symbol: ethereum,
         bgColor: "#6B8AFF33",
-        textColor: "#6B8AFF",
-      };
-    case ChainId.NOVA_SEPOLIA:
-      return {
-        Symbol: zklink,
-        bgColor: "#03D498",
         textColor: "#6B8AFF",
       };
     case ChainId.POLYGON:
@@ -140,6 +140,20 @@ export function ChainLogo({
   const { label } = getChainInfo(chainId);
 
   const { Symbol, bgColor } = getChainUI(chainId, darkMode);
+  console.log(
+    chainId,
+    Symbol,
+    bgColor,
+    surface2,
+    size,
+    borderRadius,
+    fillContainer,
+    className,
+    style,
+    testId,
+    label,
+    "ChainLogo",
+  );
   const iconSize = fillContainer ? "100%" : size;
 
   return (

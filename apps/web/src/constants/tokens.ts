@@ -340,6 +340,21 @@ export const DAI_AVALANCHE = new Token(
   "Dai.e Token",
 );
 
+export const UT1_NOVA_SEPOLIA = new Token(
+  ChainId.NOVA_SEPOLIA,
+  "0xE0353c66AB0d4eb782DDbBd2BBe16D866EeCB1c3",
+  18,
+  "UT1",
+  "UT1 Token",
+);
+export const UT2_NOVA_SEPOLIA = new Token(
+  ChainId.NOVA_SEPOLIA,
+  "0x60873F39bb43A286F64e73E0dbDD4C5C13eC52f1",
+  18,
+  "UT2",
+  "UT2 Token",
+);
+
 export const UNI: { [chainId: number]: Token } = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,

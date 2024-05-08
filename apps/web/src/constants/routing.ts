@@ -35,6 +35,8 @@ import {
   USDT_BSC,
   USDT_OPTIMISM,
   USDT_POLYGON,
+  UT1_NOVA_SEPOLIA,
+  UT2_NOVA_SEPOLIA,
   WBTC,
   WBTC_ARBITRUM_ONE,
   WBTC_CELO,
@@ -45,7 +47,7 @@ import {
   WETH_POLYGON_MUMBAI,
   WRAPPED_NATIVE_CURRENCY,
   nativeOnChain,
-} from './tokens'
+} from "./tokens";
 
 type ChainTokenList = {
   readonly [chainId: number]: Token[]
@@ -73,8 +75,14 @@ export const COMMON_BASES: ChainCurrencyList = {
     WBTC,
     WRAPPED_NATIVE_CURRENCY[ChainId.MAINNET] as Token,
   ],
-  [ChainId.GOERLI]: [nativeOnChain(ChainId.GOERLI), WRAPPED_NATIVE_CURRENCY[ChainId.GOERLI] as Token],
-  [ChainId.SEPOLIA]: [nativeOnChain(ChainId.SEPOLIA), WRAPPED_NATIVE_CURRENCY[ChainId.SEPOLIA] as Token],
+  [ChainId.GOERLI]: [
+    nativeOnChain(ChainId.GOERLI),
+    WRAPPED_NATIVE_CURRENCY[ChainId.GOERLI] as Token,
+  ],
+  [ChainId.SEPOLIA]: [
+    nativeOnChain(ChainId.SEPOLIA),
+    WRAPPED_NATIVE_CURRENCY[ChainId.SEPOLIA] as Token,
+  ],
 
   [ChainId.ARBITRUM_ONE]: [
     nativeOnChain(ChainId.ARBITRUM_ONE),
@@ -100,10 +108,20 @@ export const COMMON_BASES: ChainCurrencyList = {
     WBTC_OPTIMISM,
     WETH9[ChainId.OPTIMISM],
   ],
-  [ChainId.OPTIMISM_GOERLI]: [nativeOnChain(ChainId.OPTIMISM_GOERLI), USDC_OPTIMISM_GOERLI],
+  [ChainId.OPTIMISM_GOERLI]: [
+    nativeOnChain(ChainId.OPTIMISM_GOERLI),
+    USDC_OPTIMISM_GOERLI,
+  ],
 
-  [ChainId.BASE]: [nativeOnChain(ChainId.BASE), WRAPPED_NATIVE_CURRENCY[ChainId.BASE] as Token, USDC_BASE],
-  [ChainId.BLAST]: [nativeOnChain(ChainId.BLAST), WRAPPED_NATIVE_CURRENCY[ChainId.BLAST] as Token],
+  [ChainId.BASE]: [
+    nativeOnChain(ChainId.BASE),
+    WRAPPED_NATIVE_CURRENCY[ChainId.BASE] as Token,
+    USDC_BASE,
+  ],
+  [ChainId.BLAST]: [
+    nativeOnChain(ChainId.BLAST),
+    WRAPPED_NATIVE_CURRENCY[ChainId.BLAST] as Token,
+  ],
 
   [ChainId.POLYGON]: [
     nativeOnChain(ChainId.POLYGON),
@@ -120,10 +138,29 @@ export const COMMON_BASES: ChainCurrencyList = {
     WETH_POLYGON_MUMBAI,
   ],
 
-  [ChainId.CELO]: [nativeOnChain(ChainId.CELO), CEUR_CELO, CUSD_CELO, PORTAL_ETH_CELO, USDC_CELO, WBTC_CELO],
-  [ChainId.CELO_ALFAJORES]: [nativeOnChain(ChainId.CELO_ALFAJORES), CUSD_CELO_ALFAJORES, CEUR_CELO_ALFAJORES],
+  [ChainId.CELO]: [
+    nativeOnChain(ChainId.CELO),
+    CEUR_CELO,
+    CUSD_CELO,
+    PORTAL_ETH_CELO,
+    USDC_CELO,
+    WBTC_CELO,
+  ],
+  [ChainId.CELO_ALFAJORES]: [
+    nativeOnChain(ChainId.CELO_ALFAJORES),
+    CUSD_CELO_ALFAJORES,
+    CEUR_CELO_ALFAJORES,
+  ],
 
-  [ChainId.BNB]: [nativeOnChain(ChainId.BNB), DAI_BSC, USDC_BSC, USDT_BSC, ETH_BSC, BTC_BSC, BUSD_BSC],
+  [ChainId.BNB]: [
+    nativeOnChain(ChainId.BNB),
+    DAI_BSC,
+    USDC_BSC,
+    USDT_BSC,
+    ETH_BSC,
+    BTC_BSC,
+    BUSD_BSC,
+  ],
 
   [ChainId.AVALANCHE]: [
     nativeOnChain(ChainId.AVALANCHE),
@@ -132,7 +169,13 @@ export const COMMON_BASES: ChainCurrencyList = {
     USDT_AVALANCHE,
     WETH_AVALANCHE,
   ],
-}
+  [ChainId.NOVA_SEPOLIA]: [
+    nativeOnChain(ChainId.NOVA_SEPOLIA),
+    WRAPPED_NATIVE_CURRENCY[ChainId.NOVA_SEPOLIA] as Token,
+    UT1_NOVA_SEPOLIA,
+    UT2_NOVA_SEPOLIA,
+  ],
+};
 
 // used to construct the list of all pairs we consider by default in the frontend
 export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
