@@ -299,6 +299,7 @@
     "wcag-contrast": "3.0.0",
     "web-vitals": "2.1.4",
     "xml2js": "0.6.2",
+    "zksync-web3": "0.17.1",
     "zone.js": "0.12.0",
     "zustand": "4.4.6"
   },

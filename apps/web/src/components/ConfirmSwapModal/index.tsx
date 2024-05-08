@@ -178,6 +178,8 @@ export function ConfirmSwapModal({
     unsuppressPopups()
   }, [confirmModalState, doesTradeDiffer, onCancel, onDismiss, priceUpdate, unsuppressPopups, trade])
 
+  console.log('confirmModalState',confirmModalState)
+  console.log('disabledConfirm' ,showAcceptChanges, isPreviewTrade(trade), allowance.state === AllowanceState.LOADING,showAcceptChanges || isPreviewTrade(trade) || allowance.state === AllowanceState.LOADING)
   return (
     // Wrapping in a new theme provider resets any color extraction overriding on the current page. Swap modal should use default/non-overridden theme.
     <ThemeProvider>

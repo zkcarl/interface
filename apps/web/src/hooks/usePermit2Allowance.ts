@@ -1,4 +1,4 @@
-import { PERMIT2_ADDRESS } from '@uniswap/permit2-sdk'
+// import { PERMIT2_ADDRESS } from '@uniswap/permit2-sdk'
 import { CurrencyAmount, Token } from "@novaswap/sdk-core";
 import { useWeb3React } from '@web3-react/core'
 import { AVERAGE_L1_BLOCK_TIME } from 'constants/chainInfo'
@@ -8,6 +8,8 @@ import useInterval from 'lib/hooks/useInterval'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { TradeFillType } from 'state/routing/types'
 import { useHasPendingApproval, useHasPendingRevocation, useTransactionAdder } from 'state/transactions/hooks'
+
+const PERMIT2_ADDRESS  = '0x292a0705d5e3674b724f6d9e2daee464aaf0994a';
 
 enum ApprovalState {
   PENDING,
@@ -49,6 +51,8 @@ export default function usePermit2Allowance(
   spender?: string,
   tradeFillType?: TradeFillType
 ): Allowance {
+
+  console.log('usePermit2Allowance',amount,spender,tradeFillType)
   const { account } = useWeb3React()
   const token = amount?.currency
 

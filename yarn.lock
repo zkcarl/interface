@@ -97,8 +97,8 @@ __metadata:
   linkType: hard
 
 "@amplitude/analytics-browser@npm:^1.5.8":
-  version: 1.13.4
-  resolution: "@amplitude/analytics-browser@npm:1.13.4"
+  version: 1.13.5
+  resolution: "@amplitude/analytics-browser@npm:1.13.5"
   dependencies:
     "@amplitude/analytics-client-common": ^1.2.2
     "@amplitude/analytics-core": ^1.2.5
@@ -107,7 +107,7 @@ __metadata:
     "@amplitude/plugin-web-attribution-browser": ^1.0.12
     "@amplitude/ua-parser-js": ^0.7.31
     tslib: ^2.4.1
-  checksum: c79e54c64a7be6e35ca07f0936eba233fddfdd800f07027e8919d93b1ee669d65248efa9fa426fff9c6d3ef28727aa87d60d63e50bf3b1be1b96829e4d54b61d
+  checksum: ba54607a0102311ff635835ceaca52e2519e23ec660cde241ca095c16f9c99ccbdf40fd4e50081a88bb2f59422382e51744ab20039a31cf94bd3a273a58e606d
   languageName: node
   linkType: hard
 
@@ -7250,11 +7250,11 @@ __metadata:
   linkType: hard
 
 "@npmcli/fs@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@npmcli/fs@npm:3.1.0"
+  version: 3.1.1
+  resolution: "@npmcli/fs@npm:3.1.1"
   dependencies:
     semver: ^7.3.5
-  checksum: a50a6818de5fc557d0b0e6f50ec780a7a02ab8ad07e5ac8b16bf519e0ad60a144ac64f97d05c443c3367235d337182e1d012bbac0eb8dbae8dc7b40b193efd0e
+  checksum: d960cab4b93adcb31ce223bfb75c5714edbd55747342efb67dcc2f25e023d930a7af6ece3e75f2f459b6f38fc14d031c766f116cd124fdc937fd33112579e820
   languageName: node
   linkType: hard
 
@@ -14353,6 +14353,7 @@ __metadata:
     wrangler: 3.15.0
     xml2js: 0.6.2
     yarn-deduplicate: 6.0.0
+    zksync-web3: 0.17.1
     zone.js: 0.12.0
     zustand: 4.4.6
   languageName: unknown
@@ -22770,8 +22771,8 @@ __metadata:
   linkType: hard
 
 "dotenv-cli@npm:^7.0.0":
-  version: 7.4.1
-  resolution: "dotenv-cli@npm:7.4.1"
+  version: 7.4.2
+  resolution: "dotenv-cli@npm:7.4.2"
   dependencies:
     cross-spawn: ^7.0.3
     dotenv: ^16.3.0
@@ -22779,7 +22780,7 @@ __metadata:
     minimist: ^1.2.6
   bin:
     dotenv: cli.js
-  checksum: 213ed2a446db0aed329fb8792107dd3bacab409eb4904137f57f6e428e0de7abfce2e1cbf34b311ce8b36090931a316e943cf193975a2eb8e855ad7db3df8cf5
+  checksum: 48d887ea9be08f7453dc87d6c938311989e951d0b43028eadcbaff3be1ca56180f8c38b8f932fc2e59f0210e59f4b5c59cf8a34da3e6c92f63fe6d7ce4f09f65
   languageName: node
   linkType: hard
 
@@ -22965,9 +22966,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.757
-  resolution: "electron-to-chromium@npm:1.4.757"
-  checksum: 61fbfbc1a1ca5715f36915a12b666c4e6a76992e8e504164c73f2000a342500fc32476971fcdb6bc626e83c40fa7ba0ac17bd3a87bf491ae49ffabcdc6782371
+  version: 1.4.758
+  resolution: "electron-to-chromium@npm:1.4.758"
+  checksum: 6bc47d466834f65a869b25904a7097051e464bc3d7beb9c17250fea849a5944f8be963ec7b254a47f3650b2061f7f4e9f07044771aa07c5fcd36bc7de60392ad
   languageName: node
   linkType: hard
 
@@ -23116,12 +23117,12 @@ __metadata:
   linkType: hard
 
 "enhanced-resolve@npm:^5.12.0, enhanced-resolve@npm:^5.15.0, enhanced-resolve@npm:^5.16.0, enhanced-resolve@npm:^5.8.3":
-  version: 5.16.0
-  resolution: "enhanced-resolve@npm:5.16.0"
+  version: 5.16.1
+  resolution: "enhanced-resolve@npm:5.16.1"
   dependencies:
     graceful-fs: ^4.2.4
     tapable: ^2.2.0
-  checksum: ccfd01850ecf2aa51e8554d539973319ff7d8a539ef1e0ba3460a0ccad6223c4ef6e19165ee64161b459cd8a48df10f52af4434c60023c65fde6afa32d475f7e
+  checksum: 6e4c166fef72ef231455f9119686d93ecccb11874f8256d73a42de5b293cb2536050849382468864b25973514ca4fa4cb13c37be2ff857a211e2aca3ff05bb6c
   languageName: node
   linkType: hard
 
@@ -42103,12 +42104,12 @@ __metadata:
   linkType: hard
 
 "statsig-js@npm:^4.41.0":
-  version: 4.53.0
-  resolution: "statsig-js@npm:4.53.0"
+  version: 4.53.1
+  resolution: "statsig-js@npm:4.53.1"
   dependencies:
     js-sha256: ^0.11.0
     uuid: ^9.0.1
-  checksum: de9a9e1bfd7c9dbfe8fd6e0f1e6bf580ae20a64de31c1331fe6421b35b710342c49523e047744d45aa3df9928838b0216c893703bf2baab59c401e9689b69f98
+  checksum: 6ba9aa88a0ffc6418d58a1ec7f4ccaf32ae6834fd14db41c228ba3a2b0bafa6dded82c2d48d00227b8652a5d8b0e297a9c6bb6ca28c49727df6776123dccd587
   languageName: node
   linkType: hard
 
@@ -44983,7 +44984,6 @@ __metadata:
     syncpack: ^8.5.14
     turbo: 1.10.16
     turbo-ignore: ^1.11.3
-    zksync-web3: 0.17.1
   languageName: unknown
   linkType: soft
 
@@ -45660,8 +45660,8 @@ __metadata:
   linkType: hard
 
 "viem@npm:2.x":
-  version: 2.10.1
-  resolution: "viem@npm:2.10.1"
+  version: 2.10.2
+  resolution: "viem@npm:2.10.2"
   dependencies:
     "@adraffy/ens-normalize": 1.10.0
     "@noble/curves": 1.2.0
@@ -45676,7 +45676,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 1eb6478a4c5a8211f8990b1b735ffa223c7eb8659f31bed90525fc55a9db0fcfe11bf619e8c60808a8992ca39fdab364b7c1335a66ca856594e6f48cf284d2c3
+  checksum: 45e7e29908659c60e0a8881f28dcee51a8686004874b425785af18641f19a94489cd694406d4377f7e3db18c3a22764c3518af372c6857753aad877d8f251395
   languageName: node
   linkType: hard
 
@@ -47503,9 +47503,9 @@ __metadata:
   linkType: hard
 
 "zod@npm:^3.20.6":
-  version: 3.23.6
-  resolution: "zod@npm:3.23.6"
-  checksum: f534119e2a54e86bf77e5c6ff630ef4ec50b87dd9d9faf66dc7a663a489d37130b716ebd836cdd9d7fc6e124a1accdc0d53f388243a236c10e632dcc945eaa27
+  version: 3.23.7
+  resolution: "zod@npm:3.23.7"
+  checksum: 84224ec30889fea106d2e224b6e80c2334134be8be17c81b4fc191f4727334441f1e314185e5151e9813f7c83565d07e13ac768db7f58e2dbfd02d3a59816fb6
   languageName: node
   linkType: hard
 
