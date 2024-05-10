@@ -45,7 +45,6 @@ function useTicksFromSubgraph(
   chainId: ChainId,
 ) {
   const apolloClient = chainToApolloClient[chainId];
-  console.log("V3_CORE_FACTORY_ADDRESSES[chainId]2", V3_CORE_FACTORY_ADDRESSES);
   const poolAddress =
     currencyA && currencyB && feeAmount
       ? Pool.getAddress(
@@ -90,6 +89,7 @@ function useAllV3Ticks(
     skipNumber,
     chainId,
   );
+  console.log(subgraphTickData, "subgraphTickData");
 
   useEffect(() => {
     if (data?.ticks.length) {
@@ -124,6 +124,7 @@ export function usePoolActiveLiquidity(
   sqrtPriceX96?: JSBI;
   data?: TickProcessed[];
 } {
+  console.log("usePoolActiveLiquidity");
   const defaultChainId = useWeb3React().chainId ?? ChainId.MAINNET;
   const pool = usePoolMultichain(
     currencyA?.wrapped,
@@ -146,6 +147,14 @@ export function usePoolActiveLiquidity(
     currencyB,
     feeAmount,
     chainId ?? defaultChainId,
+  );
+  console.log(
+    ticks,
+    "ticks",
+    isLoading,
+    error,
+    defaultChainId,
+    "defaultChainId",
   );
 
   return useMemo(() => {

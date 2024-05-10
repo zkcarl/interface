@@ -183,6 +183,15 @@ export default function LiquidityChartRangeInput({
   const isUninitialized =
     !currencyA || !currencyB || (formattedData === undefined && !isLoading);
 
+
+  console.log(
+    "formattedData",
+    formattedData,
+    currencyA,
+    currencyB,
+    feeAmount,
+    isLoading,
+  );
   return (
     <AutoColumn gap="md" style={{ minHeight: "200px" }}>
       {isUninitialized ? (

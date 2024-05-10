@@ -14,6 +14,7 @@ export function useDensityChartData({
   currencyB?: Currency;
   feeAmount?: FeeAmount;
 }) {
+  console.log("useDensityChartData");
   const { isLoading, error, data } = usePoolActiveLiquidity(
     currencyA,
     currencyB,
