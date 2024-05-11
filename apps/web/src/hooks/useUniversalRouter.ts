@@ -94,7 +94,8 @@ export function useUniversalRouterSwapCallback(
           if (chainId !== connectedChainId) throw new WrongChainError();
 
           const deadline = await getDeadline();
-
+        
+          console.log('deadline====>',deadline.toString(10),new Date(deadline.toString(10) * 1000))
           trace.setData(
             "slippageTolerance",
             options.slippageTolerance.toFixed(2),
