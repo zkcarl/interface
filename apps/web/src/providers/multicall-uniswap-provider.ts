@@ -84,7 +84,6 @@ export class UniswapMulticallProvider extends IMulticallProvider<UniswapMultical
       functionParams,
     );
 
-    console.log(this.gasLimitPerCall, "this.gasLimitPerCall");
     const calls = _.map(addresses, (address) => {
       return {
         target: address,

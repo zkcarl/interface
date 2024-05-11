@@ -19,27 +19,6 @@ import {
   URAQuoteType,
 } from "./types";
 import { isExactInput, transformQuoteToTrade } from "./utils";
-import { ChainId } from "@novaswap/sdk-core";
-import { RPC_PROVIDERS } from "constants/providers";
-import { UniswapMulticallProvider } from "providers/multicall-uniswap-provider";
-
-const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
-  ChainId.MAINNET,
-  ChainId.OPTIMISM,
-  ChainId.OPTIMISM_GOERLI,
-  ChainId.ARBITRUM_ONE,
-  ChainId.ARBITRUM_GOERLI,
-  ChainId.POLYGON,
-  ChainId.POLYGON_MUMBAI,
-  ChainId.GOERLI,
-  ChainId.SEPOLIA,
-  ChainId.NOVA_SEPOLIA,
-  ChainId.CELO_ALFAJORES,
-  ChainId.CELO,
-  ChainId.BNB,
-  ChainId.AVALANCHE,
-  ChainId.BASE,
-];
 
 const UNISWAP_GATEWAY_DNS_URL = process.env.REACT_APP_UNISWAP_GATEWAY_DNS;
 if (UNISWAP_GATEWAY_DNS_URL === undefined) {

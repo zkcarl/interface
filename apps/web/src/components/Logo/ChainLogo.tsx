@@ -140,20 +140,6 @@ export function ChainLogo({
   const { label } = getChainInfo(chainId);
 
   const { Symbol, bgColor } = getChainUI(chainId, darkMode);
-  console.log(
-    chainId,
-    Symbol,
-    bgColor,
-    surface2,
-    size,
-    borderRadius,
-    fillContainer,
-    className,
-    style,
-    testId,
-    label,
-    "ChainLogo",
-  );
   const iconSize = fillContainer ? "100%" : size;
 
   return (

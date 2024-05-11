@@ -33,8 +33,6 @@ import {
   SwapRouterNativeAssets,
 } from "state/routing/types";
 import { transformSwapRouteToGetQuoteResult } from "utils/transformSwapRouteToGetQuoteResult";
-import NodeCache from "node-cache";
-import { CachingTokenProviderWithFallback } from "providers/caching-token-provider";
 
 const CLIENT_SIDE_ROUTING_ALLOW_LIST = [
   ChainId.MAINNET,
@@ -58,11 +56,8 @@ export async function getRouter(chainId: ChainId): Promise<AlphaRouter> {
   const router = routers.get(chainId);
   // console.log(router, "router_____res");
   if (router) return router;
-  const supportedChainId = 810181;
-  // const tokenCache = new NodeJSCache<Token>(
-  //   new NodeCache({ stdTTL: 3600, useClones: false }),
-  // );
-  if (supportedChainId) {
+  const supportedChainId = asSupportedChain(chainId);
+  if (supportedChainId && CLIENT_SIDE_ROUTING_ALLOW_LIST.includes(chainId)) {
     const provider = RPC_PROVIDERS[supportedChainId];
     const multicallProvider = new UniswapMulticallProvider(chainId, provider);
     console.log(multicallProvider, "multicallProvider");
