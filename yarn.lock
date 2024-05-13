@@ -20689,6 +20689,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"css-loader@npm:7.1.1":
+  version: 7.1.1
+  resolution: "css-loader@npm:7.1.1"
+  dependencies:
+    icss-utils: ^5.1.0
+    postcss: ^8.4.33
+    postcss-modules-extract-imports: ^3.1.0
+    postcss-modules-local-by-default: ^4.0.5
+    postcss-modules-scope: ^3.2.0
+    postcss-modules-values: ^4.0.0
+    postcss-value-parser: ^4.2.0
+    semver: ^7.5.4
+  peerDependencies:
+    "@rspack/core": 0.x || 1.x
+    webpack: ^5.27.0
+  peerDependenciesMeta:
+    "@rspack/core":
+      optional: true
+    webpack:
+      optional: true
+  checksum: 586e8d2d38c1456355cde973bebae7ba9dbe46640a485cae75e5d867f87b9171284245f8951e635ae82466b614ca19a4951966ab48743cdfa161321d79aa677c
+  languageName: node
+  linkType: hard
+
 "css-loader@npm:^6.5.1":
   version: 6.11.0
   resolution: "css-loader@npm:6.11.0"
@@ -44971,6 +44995,7 @@ __metadata:
     "@ethersproject/keccak256": 5.7.0
     "@manypkg/cli": ^0.19.2
     "@types/stats-lite": 2.2.2
+    css-loader: 7.1.1
     danger: 11.2.6
     depcheck: 1.4.7
     dotenv-cli: ^7.0.0

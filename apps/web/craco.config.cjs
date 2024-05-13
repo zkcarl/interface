@@ -27,6 +27,14 @@ function getCacheDirectory(cacheName) {
 }
 
 module.exports = {
+
+  style: {
+    css: {
+      loaderOptions: {
+        url: false,
+      },
+    },
+  },
   eslint: {
     enable: shouldLintOrTypeCheck,
     pluginOptions(eslintConfig) {
@@ -132,9 +140,9 @@ module.exports = {
           // Allow vanilla-extract in production builds.
           // This is necessary because create-react-app guards against external imports.
           // See https://sandroroth.com/blog/vanilla-extract-cra#production-build.
-          if (plugin instanceof ModuleScopePlugin) {
-            plugin.allowedPaths.push(path.join(__dirname, '..', '..', 'node_modules/@vanilla-extract/webpack-plugin'))
-          }
+          // if (plugin instanceof ModuleScopePlugin) {
+            plugin?.allowedPaths?.push(path.join(__dirname, '..', '..', 'node_modules/@vanilla-extract/webpack-plugin'))
+          // }
 
           return plugin;
         }),
